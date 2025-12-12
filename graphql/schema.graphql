@@ -1,0 +1,19 @@
+type Song {
+  id: ID!
+  title: String!
+  artist: String!
+  fileKey: String!
+}
+
+type UploadUrlResponse {
+  uploadUrl: String!
+  finalKey: String!
+}
+
+type Query {
+  getSongs: [Song!]!
+}
+
+type Mutation {
+  getUploadUrl(title: String!, artist: String!): UploadUrlResponse! 
+}

@@ -1,16 +1,35 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
+
+import { createCognito } from "../infra/createCognito";
+import { createSongsBucket } from "../infra/createSongsBucket";
+import { getResolvers } from "../graphql/resolvers";
+import { createSongsTable } from "../infra/createSongsTable";
+import { createLambdas } from "../infra/createLambdas";
+import { AppSyncApi } from "../infra/createAppSync";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const { userPool, userPoolClient } = createCognito(this, "dev");
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'PulseInfraQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const songsTable = createSongsTable({ stack: this, stage: "dev" });
+    const songsBucket = createSongsBucket(this, { songsTable });
+
+    const lambdas: ReturnType<typeof createLambdas> = createLambdas(this, {
+      stage: "dev",
+      songsTable,
+      songsBucket,
+    });
+
+    new AppSyncApi(this, "SongsApi", {
+      name: "SongsApi",
+      schemaPath: "graphql/schema.graphql",
+      resolvers: getResolvers(lambdas),
+      userPool,
+      userPoolClient,
+      enableApiKey: false,
+    });
   }
 }
