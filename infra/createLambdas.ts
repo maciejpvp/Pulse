@@ -2,13 +2,13 @@ import { aws_dynamodb, aws_s3, Stack } from "aws-cdk-lib";
 import { CreateLambda, CreateLambdaProps } from "../constructs/CreateLambda";
 
 type Props = {
-  songsTable: aws_dynamodb.Table;
+  musicTable: aws_dynamodb.Table;
   songsBucket: aws_s3.Bucket;
   stage: string;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { songsTable, songsBucket, stage } = props;
+  const { musicTable, songsBucket, stage } = props;
 
   const lambdaConfig: CreateLambdaProps[] = [
     {
@@ -22,6 +22,77 @@ export const createLambdas = (stack: Stack, props: Props) => {
         },
       ],
     },
+    {
+      name: "createPlaylist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "addToPlaylist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "createArtist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getArtist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getArtistSongs",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "songPlay",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+        {
+          grant: (fn) => songsBucket.grantRead(fn),
+          envName: "songsBucket",
+          envValue: songsBucket.bucketName,
+        }
+      ],
+    }
   ];
 
   const lambdas = Object.fromEntries(

@@ -5,17 +5,18 @@ const s3 = new S3Client({});
 const bucket = process.env.songsBucket!;
 
 export const handler = async (event: any) => {
-  const { title, artist } = event.arguments;
+  const { songTitle, artistId, albumId } = event.arguments;
 
-  const finalKey = `songs/${Date.now()}-${title}`;
+  const finalKey = `songs/${Date.now()}-${songTitle}`;
 
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: finalKey,
     ContentType: "audio/mpeg",
     Metadata: {
-      title: title,
-      artist: artist,
+      songTitle,
+      artistId,
+      albumId,
     },
   });
 

@@ -5,10 +5,10 @@ import * as aws_dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
 
 type Props = {
-  songsTable: aws_dynamodb.Table;
+  musicTable: aws_dynamodb.Table;
 }
 
-export function createSongsBucket(stack: Stack, { songsTable }: Props): s3.Bucket {
+export function createSongsBucket(stack: Stack, { musicTable }: Props): s3.Bucket {
   const bucket = new s3.Bucket(stack, "SongsBucket", {
     blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     removalPolicy: RemovalPolicy.DESTROY,
@@ -34,9 +34,9 @@ export function createSongsBucket(stack: Stack, { songsTable }: Props): s3.Bucke
         envValue: bucket.bucketName,
       },
       {
-        grant: (fn) => songsTable.grantWriteData(fn),
-        envName: "songsTable",
-        envValue: songsTable.tableName,
+        grant: (fn) => musicTable.grantWriteData(fn),
+        envName: "musicTable",
+        envValue: musicTable.tableName,
       }
     ],
   });

@@ -4,9 +4,9 @@ import { Construct } from "constructs";
 import { createCognito } from "../infra/createCognito";
 import { createSongsBucket } from "../infra/createSongsBucket";
 import { getResolvers } from "../graphql/resolvers";
-import { createSongsTable } from "../infra/createSongsTable";
 import { createLambdas } from "../infra/createLambdas";
 import { AppSyncApi } from "../infra/createAppSync";
+import { createMusicTable } from "../infra/DynamoDB/createMusicTable";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -14,12 +14,12 @@ export class PulseInfraStack extends cdk.Stack {
 
     const { userPool, userPoolClient } = createCognito(this, "dev");
 
-    const songsTable = createSongsTable({ stack: this, stage: "dev" });
-    const songsBucket = createSongsBucket(this, { songsTable });
+    const musicTable = createMusicTable({ stack: this, stage: "dev" });
+    const songsBucket = createSongsBucket(this, { musicTable });
 
     const lambdas: ReturnType<typeof createLambdas> = createLambdas(this, {
       stage: "dev",
-      songsTable,
+      musicTable,
       songsBucket,
     });
 
