@@ -20,10 +20,22 @@ type Song {
   duration: Int
 }
 
+type User {
+  id: ID!
+}
+
+enum PlaylistVisibility {
+  PUBLIC
+  PRIVATE
+}
+
 type Playlist {
   id: ID!
   name: String!
   songs: [Song!]!
+  creator: User!
+  createdAt: String!
+  visibility: PlaylistVisibility!
 }
 
 type UploadUrlResponse {
@@ -35,13 +47,29 @@ type AddToPlaylistResult {
   songId: ID!
 }
 
+type RemoveFromPlaylistResult {
+  playlistId: ID!
+  songId: ID!
+  removed: Boolean!
+}
+
+enum ContextType {
+  ALBUM
+  PLAYLIST
+  ARTIST
+  SONG
+}
+
 input SongPlayInput {
   artistId: String!
   songId: String!
+  contextType: ContextType!
+  contextId: String!
 }
 
 type Query {
   artist(artistId: ID!): Artist!
+  playlist(playlistId: ID!): Playlist!
   songPlay(input: SongPlayInput!): String!
 }
 
@@ -53,5 +81,7 @@ type Mutation {
   artistCreate(name: String!): Artist!
   albumCreate(name: String!, artistId: ID!): Album!
   playlistCreate(name: String!): Playlist!
+  playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!
+  playlistRemoveFromPlaylist(playlistId: ID!, songId: ID!): RemoveFromPlaylistResult!
 }
 

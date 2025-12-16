@@ -45,6 +45,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
+      name: "removeFromPlaylist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
       name: "createArtist",
       stage,
       resources: [
@@ -67,7 +78,29 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
+      name: "getPlaylist",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
       name: "getArtistSongs",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getPlaylistSongs",
       stage,
       resources: [
         {
@@ -82,7 +115,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
       stage,
       resources: [
         {
-          grant: (fn) => musicTable.grantReadData(fn),
+          grant: (fn) => musicTable.grantReadWriteData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
         },

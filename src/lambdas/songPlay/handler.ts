@@ -1,4 +1,4 @@
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { docClient } from "../../utils/dynamoClient";
@@ -26,6 +26,29 @@ export const handler = async (event: any) => {
 
     if (!response.Item) throw new Error("Song not found");
 
+    //Update Last Listened
+
+    const now = Math.floor(Date.now() / 1000);
+    const ttl = now + 7 * 24 * 60 * 60;
+
+    const contextType = event.arguments.input.contextType;
+    const contextId = event.arguments.input.contextId;
+
+    const updateLastListened = await docClient.send(new PutCommand({
+        TableName: musicTable,
+        Item: {
+            PK: `USER#${userId}`,
+            SK: `LASTLISTENED#${now}`,
+            type: "ListenEvent",
+            contextType, // ALBUM | SONG | PLAYLIST | ARTIST
+            contextId,
+            ttl
+        }
+    }))
+
+    console.log("Last listened updated", updateLastListened);
+
+    // Give Song File
     const fileKey = response.Item.fileKey;
     if (!fileKey) throw new Error("fileKey missing for song");
 

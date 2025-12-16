@@ -10,21 +10,35 @@ export const handler = async (event: any) => {
     const userId = event.identity?.sub;
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
-    const artistId = uuidv4();
+    const id = uuidv4();
     const now = new Date().toISOString();
 
+    const searchKey = name.toLowerCase().trim().replace(/\s+/g, "-");
+
     const item = {
-        PK: `ARTIST#${artistId}`,
+        PK: `PLAYLIST#${id}`,
         SK: "METADATA",
         name,
-        userId,
+        creatorId: userId,
         createdAt: now,
+        visibility: "PUBLIC", // For now only public playlists are supported 
+        GSI1PK: "PLAYLIST",
+        GSI1SK: searchKey,
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
 
-    return {
-        id: artistId,
-    };
+    const playlistItem = {
+        id,
+        name,
+        songs: [],
+        creator: {
+            id: userId,
+        },
+        createdAt: now,
+        visibility: "PUBLIC",
+    }
+
+    return playlistItem;
 };
 

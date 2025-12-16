@@ -1,22 +1,23 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { docClient } from "../../utils/dynamoClient";
 
-const db = new DynamoDBClient({});
-const tableName = process.env.musicTable!;
+const musicTable = process.env.musicTable!;
 
 export const handler = async (event: any) => {
-    const { playlistId, songId } = event.arguments;
+    const { playlistId, songId, songArtistId } = event.arguments;
 
     const userId = event.identity?.sub;
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
     const item = {
-        PK: { S: `PLAYLIST#${playlistId}` },
-        SK: { S: `SONG#${songId}` },
-        songId: { S: songId },
-        addedAt: { S: new Date().toISOString() },
+        PK: `PLAYLIST#${playlistId}`,
+        SK: `SONG#${songId}`,
+        songId,
+        songArtistId,
+        addedAt: new Date().toISOString(),
     };
 
-    await db.send(new PutItemCommand({ TableName: tableName, Item: item }));
+    await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
 
     return { playlistId, songId };
 };

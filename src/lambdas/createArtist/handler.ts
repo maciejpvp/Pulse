@@ -13,12 +13,16 @@ export const handler = async (event: any) => {
     const artistId = uuidv4();
     const now = new Date().toISOString();
 
+    const searchKey = name.toLowerCase().trim().replace(/\s+/g, "-");
+
     const item = {
         PK: `ARTIST#${artistId}`,
         SK: "METADATA",
         name,
         userId,
         createdAt: now,
+        GSI1PK: "ARTIST",
+        GSI1SK: searchKey,
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));

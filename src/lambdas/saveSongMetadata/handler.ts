@@ -1,7 +1,7 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
+import { docClient } from "../../utils/dynamoClient";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 
-const db = new DynamoDBClient({});
 const s3 = new S3Client({});
 const musicTable = process.env.musicTable!;
 
@@ -18,6 +18,7 @@ export const handler = async (event: any) => {
 
         const artistId = meta.artistid;
         const title = meta.songtitle;
+        const albumId = meta.albumid;
 
         if (!artistId || !title) {
             console.error("Missing required S3 metadata", meta);
@@ -26,19 +27,20 @@ export const handler = async (event: any) => {
 
         const songId = uuidv4();
 
+        const searchKey = title.toLowerCase().trim().replace(/\s+/g, "-");
+
         const item = {
-            PK: { S: `ARTIST#${artistId}` },
-            SK: { S: `SONG#${songId}` },
-            title: { S: title },
-            fileKey: { S: key },
-            // albumId: { S: albumId },
-            // duration: { N: duration.toString() },
-            // GSI1PK: { S: `ALBUM#${albumId}` },
-            // GSI1SK: { S: `SONG#${songId}` },
+            PK: `ARTIST#${artistId}`,
+            SK: `SONG#${songId}`,
+            title: title,
+            fileKey: key,
+            albumId: albumId ?? undefined,
+            GSI1PK: "SONG",
+            GSI1SK: searchKey,
         };
 
-        await db.send(
-            new PutItemCommand({
+        await docClient.send(
+            new PutCommand({
                 TableName: musicTable,
                 Item: item,
             })

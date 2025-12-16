@@ -15,23 +15,17 @@ export const createMusicTable = ({ stack, stage }: Props) => {
         sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
         removalPolicy: RemovalPolicy.DESTROY,
+        timeToLiveAttribute: "ttl",
     });
 
-    // // GSI for fetching all songs in an album quickly
     table.addGlobalSecondaryIndex({
-        indexName: "AlbumSongsIndex",
+        indexName: "SearchIndex",
         partitionKey: { name: "GSI1PK", type: dynamodb.AttributeType.STRING },
         sortKey: { name: "GSI1SK", type: dynamodb.AttributeType.STRING },
         projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // // // GSI for recently played items per user
-    table.addGlobalSecondaryIndex({
-        indexName: "RecentlyPlayedIndex",
-        partitionKey: { name: "GSI2PK", type: dynamodb.AttributeType.STRING },
-        sortKey: { name: "GSI2SK", type: dynamodb.AttributeType.STRING }, // timestamp for sorting
-        projectionType: dynamodb.ProjectionType.ALL,
-    });
+
 
     return table;
 };

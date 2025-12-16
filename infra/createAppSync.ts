@@ -57,15 +57,15 @@ export class AppSyncApi extends Construct {
       authModes.length > 0
         ? authModes[0]
         : {
-            authorizationType: appsync.AuthorizationType.API_KEY,
-          };
+          authorizationType: appsync.AuthorizationType.API_KEY,
+        };
 
     const additionalAuth =
       authModes.length > 1 ? authModes.slice(1) : undefined;
 
     this.api = new appsync.GraphqlApi(this, `${name}Api`, {
       name,
-      schema: appsync.SchemaFile.fromAsset(schemaPath),
+      definition: appsync.Definition.fromFile('graphql/schema.graphql'),
       authorizationConfig: {
         defaultAuthorization: defaultAuth,
         additionalAuthorizationModes: additionalAuth,
