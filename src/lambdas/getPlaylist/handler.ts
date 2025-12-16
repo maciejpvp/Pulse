@@ -8,6 +8,9 @@ export const handler = async (event: any) => {
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
     const playlistId = event.arguments.playlistId;
+    console.log("Playlist ID: ", playlistId);
+    console.log("Arguments: ", event.arguments);
+    console.log("Source: ", event.source);
 
     const response = await docClient.send(new GetCommand({
         TableName: musicTable,

@@ -5,17 +5,22 @@ type Artist {
   albums: [Album!]!
 }
 
+type ArtistPreview {
+  id: ID!
+  name: String!
+}
+
 type Album {
   id: ID!
   name: String!
-  artist: Artist!
+  artist: ArtistPreview!
   songs: [Song!]!
 }
 
 type Song {
   id: ID!
   title: String!
-  artist: Artist!
+  artist: ArtistPreview!
   album: Album
   duration: Int
 }

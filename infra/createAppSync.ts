@@ -95,13 +95,14 @@ export class AppSyncApi extends Construct {
 
   private attachResolver(resolver: AppSyncResolver) {
     const ds = this.api.addLambdaDataSource(
-      `${resolver.fieldName}DS`,
+      `${resolver.typeName}${resolver.fieldName}DS`,
       resolver.lambda,
     );
 
-    ds.createResolver(`${resolver.fieldName}Resolver`, {
+    ds.createResolver(`${resolver.typeName}${resolver.fieldName}Resolver`, {
       typeName: resolver.typeName,
       fieldName: resolver.fieldName,
     });
   }
+
 }
