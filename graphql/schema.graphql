@@ -29,6 +29,11 @@ type Song {
   duration: Int
 }
 
+type SongPreview {
+  id: ID!
+  title: String!
+}
+
 type User {
   id: ID!
 }
@@ -45,6 +50,11 @@ type Playlist {
   creator: User!
   createdAt: String!
   visibility: PlaylistVisibility!
+}
+
+type PlaylistPreview {
+  id: ID!
+  name: String!
 }
 
 type UploadUrlResponse {
@@ -76,11 +86,13 @@ input SongPlayInput {
   contextId: String!
 }
 
+union RecentPlayedItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview
+
 type Query {
   artist(artistId: ID!): Artist!
   album(albumId: ID!): Album!
   playlist(playlistId: ID!): Playlist!
-  songPlay(input: SongPlayInput!): String!
+  recentPlayed: [RecentPlayedItem!]!
 }
 
 input SongUploadInput {
@@ -94,6 +106,7 @@ type Mutation {
   """
   Get S3 upload URL to upload mp3 file into bucket
   """
+  songPlay(input: SongPlayInput!): String!
   songUpload(input: SongUploadInput!): UploadUrlResponse!
   artistCreate(name: String!): Artist!
   albumCreate(name: String!, artistId: ID!): Album!

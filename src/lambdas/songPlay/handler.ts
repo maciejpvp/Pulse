@@ -38,11 +38,14 @@ export const handler = async (event: any) => {
         TableName: musicTable,
         Item: {
             PK: `USER#${userId}`,
-            SK: `LASTLISTENED#${now}`,
-            type: "ListenEvent",
+            SK: `LASTLISTENED#${contextType}#${contextId}`,
             contextType, // ALBUM | SONG | PLAYLIST | ARTIST
             contextId,
-            ttl
+            artistId,
+            lastListenedAt: now,
+            ttl,
+            GSI1PK: `USER#${userId}`,
+            GSI1SK: `${now}#${contextType}#${contextId}`,
         }
     }))
 
