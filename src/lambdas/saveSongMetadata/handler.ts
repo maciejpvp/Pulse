@@ -1,6 +1,6 @@
 import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { docClient } from "../../utils/dynamoClient";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
 
 const s3 = new S3Client({});
 const musicTable = process.env.musicTable!;
@@ -19,6 +19,7 @@ export const handler = async (event: any) => {
         const artistId = meta.artistid;
         const title = meta.songtitle;
         const albumId = meta.albumid;
+        const duration = meta.duration;
 
         if (!artistId || !title) {
             console.error("Missing required S3 metadata", meta);
@@ -33,16 +34,43 @@ export const handler = async (event: any) => {
             PK: `ARTIST#${artistId}`,
             SK: `SONG#${songId}`,
             title: title,
+            duration,
             fileKey: key,
-            albumId: albumId ?? undefined,
             GSI1PK: "SONG",
             GSI1SK: searchKey,
         };
 
+        const transactItems: TransactWriteCommandInput["TransactItems"] = [
+            {
+                Put: {
+                    TableName: musicTable,
+                    Item: item,
+                    ConditionExpression: "attribute_not_exists(PK)"
+                }
+            }
+        ]
+
+        // If user specified albumId, add record to assign song with album
+        if (albumId) {
+            const albumItem = {
+                PK: `ALBUM#${albumId}`,
+                SK: `SONG#${songId}`,
+                songArtistId: artistId,
+                songId: songId,
+            };
+
+            transactItems.push({
+                Put: {
+                    TableName: musicTable,
+                    Item: albumItem,
+                    ConditionExpression: "attribute_not_exists(PK)"
+                }
+            });
+        }
+
         await docClient.send(
-            new PutCommand({
-                TableName: musicTable,
-                Item: item,
+            new TransactWriteCommand({
+                TransactItems: transactItems,
             })
         );
 

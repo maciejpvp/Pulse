@@ -89,6 +89,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
+      name: "getAlbum",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
       name: "getArtistSongs",
       stage,
       resources: [
@@ -101,6 +112,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
     },
     {
       name: "getPlaylistSongs",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getAlbumSongs",
       stage,
       resources: [
         {
@@ -124,6 +146,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envName: "songsBucket",
           envValue: songsBucket.bucketName,
         }
+      ],
+    },
+    {
+      name: "createAlbum",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
       ],
     }
   ];

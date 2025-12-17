@@ -5,7 +5,7 @@ const s3 = new S3Client({});
 const bucket = process.env.songsBucket!;
 
 export const handler = async (event: any) => {
-  const { songTitle, artistId, albumId } = event.arguments;
+  const { songTitle, artistId, albumId, duration } = event.arguments;
 
   const finalKey = `songs/${Date.now()}-${songTitle}`;
 
@@ -17,6 +17,7 @@ export const handler = async (event: any) => {
       songTitle,
       artistId,
       albumId,
+      duration,
     },
   });
 

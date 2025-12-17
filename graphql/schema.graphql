@@ -2,7 +2,7 @@ type Artist {
   id: ID!
   name: String!
   songs: [Song!]!
-  albums: [Album!]!
+  albums: [AlbumPreview!]!
 }
 
 type ArtistPreview {
@@ -17,11 +17,15 @@ type Album {
   songs: [Song!]!
 }
 
+type AlbumPreview {
+  id: ID!
+  name: String!
+}
+
 type Song {
   id: ID!
   title: String!
   artist: ArtistPreview!
-  album: Album
   duration: Int
 }
 
@@ -74,15 +78,23 @@ input SongPlayInput {
 
 type Query {
   artist(artistId: ID!): Artist!
+  album(albumId: ID!): Album!
   playlist(playlistId: ID!): Playlist!
   songPlay(input: SongPlayInput!): String!
+}
+
+input SongUploadInput {
+  songTitle: String!
+  artistId: ID!
+  duration: Int!
+  albumId: ID
 }
 
 type Mutation {
   """
   Get S3 upload URL to upload mp3 file into bucket
   """
-  songUpload(songTitle: String!, artistId: ID!, albumId: ID): UploadUrlResponse!
+  songUpload(input: SongUploadInput!): UploadUrlResponse!
   artistCreate(name: String!): Artist!
   albumCreate(name: String!, artistId: ID!): Album!
   playlistCreate(name: String!): Playlist!
