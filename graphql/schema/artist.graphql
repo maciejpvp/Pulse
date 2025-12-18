@@ -1,0 +1,11 @@
+type Artist {
+  id: ID!
+  name: String!
+  songs: [Song!]!
+  albums: [AlbumPreview!]!
+}
+
+type ArtistPreview {
+  id: ID!
+  name: String!
+}

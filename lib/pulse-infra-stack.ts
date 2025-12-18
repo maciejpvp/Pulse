@@ -25,7 +25,7 @@ export class PulseInfraStack extends cdk.Stack {
 
     new AppSyncApi(this, "SongsApi", {
       name: "SongsApi",
-      schemaPath: "graphql/schema.graphql",
+      schemaDir: "graphql/schema",
       resolvers: getResolvers(lambdas),
       userPool,
       userPoolClient,

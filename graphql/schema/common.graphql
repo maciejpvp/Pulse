@@ -1,0 +1,8 @@
+enum ContextType {
+  ALBUM
+  PLAYLIST
+  ARTIST
+  SONG
+}
+
+union RecentPlayedItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview

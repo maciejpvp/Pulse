@@ -1,0 +1,34 @@
+type UploadUrlResponse {
+  uploadUrl: String!
+}
+
+type AddToPlaylistResult {
+  playlistId: ID!
+  songId: ID!
+}
+
+type RemoveFromPlaylistResult {
+  playlistId: ID!
+  songId: ID!
+  removed: Boolean!
+}
+
+type Query {
+  artist(artistId: ID!): Artist!
+  album(albumId: ID!): Album!
+  playlist(playlistId: ID!): Playlist!
+  recentPlayed: [RecentPlayedItem!]!
+}
+
+type Mutation {
+  """
+  Get S3 upload URL to upload mp3 file into bucket
+  """
+  songPlay(input: SongPlayInput!): String!
+  songUpload(input: SongUploadInput!): UploadUrlResponse!
+  artistCreate(name: String!): Artist!
+  albumCreate(name: String!, artistId: ID!): Album!
+  playlistCreate(name: String!): Playlist!
+  playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!
+  playlistRemoveFromPlaylist(playlistId: ID!, songId: ID!): RemoveFromPlaylistResult!
+}

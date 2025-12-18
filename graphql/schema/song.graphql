@@ -1,0 +1,25 @@
+type Song {
+  id: ID!
+  title: String!
+  artist: ArtistPreview!
+  duration: Int
+}
+
+type SongPreview {
+  id: ID!
+  title: String!
+}
+
+input SongPlayInput {
+  artistId: String!
+  songId: String!
+  contextType: ContextType!
+  contextId: String!
+}
+
+input SongUploadInput {
+  songTitle: String!
+  artistId: ID!
+  duration: Int!
+  albumId: ID
+}

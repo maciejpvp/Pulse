@@ -4,6 +4,7 @@ import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as fs from "fs";
+import * as path from "path";
 
 export type AppSyncResolver = {
   typeName: string;
@@ -13,7 +14,7 @@ export type AppSyncResolver = {
 
 type AppSyncApiProps = {
   name: string;
-  schemaPath: string;
+  schemaDir: string;
   resolvers?: AppSyncResolver[];
 
   // optional Cognito
@@ -32,7 +33,7 @@ export class AppSyncApi extends Construct {
 
     const {
       name,
-      schemaPath,
+      schemaDir,
       resolvers = [],
       userPool,
       enableApiKey = false,
@@ -63,9 +64,15 @@ export class AppSyncApi extends Construct {
     const additionalAuth =
       authModes.length > 1 ? authModes.slice(1) : undefined;
 
+    // Merge schema files
+    const schemaFiles = fs.readdirSync(schemaDir).filter(file => file.endsWith('.graphql'));
+    const mergedSchema = schemaFiles.map(file => fs.readFileSync(path.join(schemaDir, file), 'utf8')).join('\n');
+    const generatedSchemaPath = path.join(schemaDir, '../schema.generated.graphql');
+    fs.writeFileSync(generatedSchemaPath, mergedSchema);
+
     this.api = new appsync.GraphqlApi(this, `${name}Api`, {
       name,
-      definition: appsync.Definition.fromFile('graphql/schema.graphql'),
+      definition: appsync.Definition.fromFile(generatedSchemaPath),
       authorizationConfig: {
         defaultAuthorization: defaultAuth,
         additionalAuthorizationModes: additionalAuth,
@@ -75,7 +82,7 @@ export class AppSyncApi extends Construct {
 
     new appsync.CfnGraphQLSchema(this, "SchemaOverride", {
       apiId: this.api.apiId,
-      definition: fs.readFileSync(schemaPath, "utf8"),
+      definition: mergedSchema,
     });
 
     for (const resolver of resolvers) {

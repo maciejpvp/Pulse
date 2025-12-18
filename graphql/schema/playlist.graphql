@@ -1,0 +1,18 @@
+enum PlaylistVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+type Playlist {
+  id: ID!
+  name: String!
+  songs: [Song!]!
+  creator: User!
+  createdAt: String!
+  visibility: PlaylistVisibility!
+}
+
+type PlaylistPreview {
+  id: ID!
+  name: String!
+}
