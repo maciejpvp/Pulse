@@ -24,7 +24,6 @@ export const handler = async (event: any) => {
     const item = {
         id: artist.PK.replace("ARTIST#", ""),
         name: artist.name,
-        albums: [],
     };
 
     return item;

@@ -2,7 +2,7 @@ type Artist {
   id: ID!
   name: String!
   songs(first: Int = 10, after: String): SongConnection!
-  albums: [AlbumPreview!]!
+  albums(first: Int = 10, after: String): AlbumConnection!
 }
 
 type ArtistPreview {

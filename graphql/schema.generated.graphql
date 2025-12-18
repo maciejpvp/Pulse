@@ -14,11 +14,21 @@ input AlbumQueryInput {
   albumId: String!
   artistId: String!
 }
+
+type AlbumEdge {
+  node: AlbumPreview!
+  cursor: String!
+}
+
+type AlbumConnection {
+  edges: [AlbumEdge!]!
+  pageInfo: PageInfo!
+}
 type Artist {
   id: ID!
   name: String!
   songs(first: Int = 10, after: String): SongConnection!
-  albums: [AlbumPreview!]!
+  albums(first: Int = 10, after: String): AlbumConnection!
 }
 
 type ArtistPreview {

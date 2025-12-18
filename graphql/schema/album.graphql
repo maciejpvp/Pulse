@@ -14,3 +14,13 @@ input AlbumQueryInput {
   albumId: String!
   artistId: String!
 }
+
+type AlbumEdge {
+  node: AlbumPreview!
+  cursor: String!
+}
+
+type AlbumConnection {
+  edges: [AlbumEdge!]!
+  pageInfo: PageInfo!
+}
