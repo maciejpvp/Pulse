@@ -15,7 +15,7 @@ type RemoveFromPlaylistResult {
 
 type Query {
   artist(artistId: ID!): Artist!
-  album(albumId: ID!): Album!
+  album(input: AlbumQueryInput!): Album!
   playlist(playlistId: ID!): Playlist!
   recentPlayed: [RecentPlayedItem!]!
 }

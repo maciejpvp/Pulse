@@ -23,3 +23,13 @@ input SongUploadInput {
   duration: Int!
   albumId: ID
 }
+
+type SongEdge {
+  node: SongPreview!
+  cursor: String!
+}
+
+type SongConnection {
+  edges: [SongEdge!]!
+  pageInfo: PageInfo!
+}

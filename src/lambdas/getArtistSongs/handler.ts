@@ -1,3 +1,4 @@
+import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
 import { docClient } from "../../utils/dynamoClient";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -9,8 +10,13 @@ export const handler = async (event: any) => {
 
     const artistId = event.source.id;
 
+    const limit = Math.min(event.arguments?.first || 20, 25);
+    const after = event.arguments?.after;
+
     console.log(`Arguments: ${JSON.stringify(event.source)}`);
     console.log(`Artist ID: ${artistId}`);
+    console.log(`Limit: ${limit}`);
+    console.log(`After: ${after}`);
 
     const response = await docClient.send(new QueryCommand({
         TableName: musicTable,
@@ -19,6 +25,8 @@ export const handler = async (event: any) => {
             ":pk": `ARTIST#${artistId}`,
             ":sk": "SONG#",
         },
+        Limit: limit,
+        ExclusiveStartKey: after ? decodeCursor(after) : undefined,
     }));
 
     console.log(`Response: ${JSON.stringify(response)}`);
@@ -27,12 +35,20 @@ export const handler = async (event: any) => {
 
     console.log(songs);
 
-    return (response.Items ?? []).map((item: any) => ({
-        id: item.SK.replace("SONG#", ""),
-        title: item.title,
-        duration: item.duration ?? 0,
-        artist: {
-            id: artistId,
-        },
-    }));
+    const edges = songs.map(song => {
+        return {
+            node: {
+                id: song.SK.replace("SONG#", ""),
+                title: song.title,
+            },
+            cursor: encodeCursor({ PK: song.PK, SK: song.SK }),
+        }
+    })
+
+    const pageInfo = {
+        endCursor: edges[edges.length - 1].cursor,
+        hasNextPage: !!response.LastEvaluatedKey,
+    };
+
+    return { edges, pageInfo };
 };

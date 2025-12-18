@@ -2,7 +2,7 @@ type Album {
   id: ID!
   name: String!
   artist: ArtistPreview!
-  songs: [Song!]!
+  songs(first: Int = 10, after: String): SongConnection!
 }
 
 type AlbumPreview {
@@ -10,10 +10,14 @@ type AlbumPreview {
   name: String!
 }
 
+input AlbumQueryInput {
+  albumId: String!
+  artistId: String!
+}
 type Artist {
   id: ID!
   name: String!
-  songs: [Song!]!
+  songs(first: Int = 10, after: String): SongConnection!
   albums: [AlbumPreview!]!
 }
 
@@ -31,6 +35,11 @@ enum ContextType {
 
 union RecentPlayedItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview
 
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
 enum PlaylistVisibility {
   PUBLIC
   PRIVATE
@@ -39,10 +48,10 @@ enum PlaylistVisibility {
 type Playlist {
   id: ID!
   name: String!
-  songs: [Song!]!
   creator: User!
   createdAt: String!
   visibility: PlaylistVisibility!
+  songs(first: Int = 10, after: String): SongConnection!
 }
 
 type PlaylistPreview {
@@ -67,7 +76,7 @@ type RemoveFromPlaylistResult {
 
 type Query {
   artist(artistId: ID!): Artist!
-  album(albumId: ID!): Album!
+  album(input: AlbumQueryInput!): Album!
   playlist(playlistId: ID!): Playlist!
   recentPlayed: [RecentPlayedItem!]!
 }
@@ -111,6 +120,15 @@ input SongUploadInput {
   albumId: ID
 }
 
+type SongEdge {
+  node: SongPreview!
+  cursor: String!
+}
+
+type SongConnection {
+  edges: [SongEdge!]!
+  pageInfo: PageInfo!
+}
 type User {
   id: ID!
 }

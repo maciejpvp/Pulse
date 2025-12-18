@@ -7,16 +7,13 @@ export const handler = async (event: any) => {
     const userId = event.identity?.sub;
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
-    const albumId = event.arguments.albumId;
-    console.log("Album ID: ", albumId);
-    console.log("Arguments: ", event.arguments);
-    console.log("Source: ", event.source);
+    const { albumId, artistId } = event.arguments.input;
 
     const response = await docClient.send(new GetCommand({
         TableName: musicTable,
         Key: {
-            PK: `ALBUM#${albumId}`,
-            SK: "METADATA",
+            PK: `ARTIST#${artistId}`,
+            SK: `ALBUM#${albumId}`,
         },
     }));
 
@@ -25,10 +22,10 @@ export const handler = async (event: any) => {
     console.log(item);
 
     const album = {
-        id: item.PK.replace("ALBUM#", ""),
+        id: item.SK.split("#")[1],
         name: item.name,
         artist: {
-            id: item.artistId,
+            id: item.PK.split("#")[1],
         },
     };
 

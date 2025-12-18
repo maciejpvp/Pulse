@@ -2,10 +2,15 @@ type Album {
   id: ID!
   name: String!
   artist: ArtistPreview!
-  songs: [Song!]!
+  songs(first: Int = 10, after: String): SongConnection!
 }
 
 type AlbumPreview {
   id: ID!
   name: String!
+}
+
+input AlbumQueryInput {
+  albumId: String!
+  artistId: String!
 }

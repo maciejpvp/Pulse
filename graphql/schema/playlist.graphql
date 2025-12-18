@@ -6,10 +6,10 @@ enum PlaylistVisibility {
 type Playlist {
   id: ID!
   name: String!
-  songs: [Song!]!
   creator: User!
   createdAt: String!
   visibility: PlaylistVisibility!
+  songs(first: Int = 10, after: String): SongConnection!
 }
 
 type PlaylistPreview {

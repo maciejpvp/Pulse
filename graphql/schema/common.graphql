@@ -6,3 +6,9 @@ enum ContextType {
 }
 
 union RecentPlayedItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview
+
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}

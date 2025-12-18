@@ -1,12 +1,24 @@
 import { BatchGetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/dynamoClient";
+import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
 
 const TABLE_NAME = process.env.musicTable!;
 
 export const handler = async (event: any) => {
     try {
-        const albumId = event.arguments?.albumId;
-        if (!albumId) return [];
+        console.log("Source: ", event.source);
+        console.log("Arguments: ", event.arguments);
+        const albumId = event.source.id;
+        if (!albumId) return {
+            edges: [],
+            pageInfo: {
+                endCursor: null,
+                hasNextPage: false,
+            }
+        };
+
+        const limit = Math.min(event.arguments?.first || 20, 25);
+        const after = event.arguments?.after;
 
         // 1. Get song references from album
         const albumSongsRes = await docClient.send(
@@ -17,12 +29,22 @@ export const handler = async (event: any) => {
                     ":pk": `ALBUM#${albumId}`,
                     ":sk": "SONG#",
                 },
+                Limit: limit,
+                ExclusiveStartKey: after ? decodeCursor(after) : undefined,
             })
         );
 
         const albumItems = albumSongsRes.Items ?? [];
         console.log("Album items: ", albumItems)
-        if (albumItems.length === 0) return [];
+        if (albumItems.length === 0) {
+            return {
+                edges: [],
+                pageInfo: {
+                    endCursor: null,
+                    hasNextPage: false,
+                }
+            }
+        };
 
         // 2. Build song keys (preserve order)
         const keys = albumItems.map(item => ({
@@ -36,7 +58,7 @@ export const handler = async (event: any) => {
             batches.push(keys.slice(i, i + 100));
         }
 
-        const songs = [];
+        const songs: any[] = [];
 
         for (const batch of batches) {
             const res = await docClient.send(
@@ -55,16 +77,30 @@ export const handler = async (event: any) => {
             }
         }
 
-        const songsMappedToGraphQL = songs.map(song => ({
-            id: song.SK.replace("SONG#", ""),
-            title: song.title,
-            duration: song.duration ?? 0,
-            artist: {
-                id: song.PK.replace("ARTIST#", ""),
-            },
-        }));
+        const songsOrdered = keys.map(key =>
+            songs.find(song => song.PK === key.PK && song.SK === key.SK)
+        );
 
-        return songsMappedToGraphQL;
+        const edges = songsOrdered.map(song => {
+            return {
+                node: {
+                    id: song.SK.replace("SONG#", ""),
+                    title: song.title,
+                    duration: song.duration ?? 0,
+                    artist: {
+                        id: song.PK.replace("ARTIST#", ""),
+                    },
+                },
+                cursor: encodeCursor({ PK: `ALBUM#${albumId}`, SK: song.SK }),
+            }
+        })
+
+        const pageInfo = {
+            endCursor: edges[edges.length - 1].cursor,
+            hasNextPage: !!albumSongsRes.LastEvaluatedKey,
+        };
+
+        return { edges, pageInfo };
 
     } catch (err) {
         console.error("getPlaylistSongs error:", err);

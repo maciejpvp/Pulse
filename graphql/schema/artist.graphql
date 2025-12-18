@@ -1,7 +1,7 @@
 type Artist {
   id: ID!
   name: String!
-  songs: [Song!]!
+  songs(first: Int = 10, after: String): SongConnection!
   albums: [AlbumPreview!]!
 }
 
