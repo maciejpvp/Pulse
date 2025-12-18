@@ -25,7 +25,7 @@ input SongUploadInput {
 }
 
 type SongEdge {
-  node: SongPreview!
+  node: Song!
   cursor: String!
 }
 

@@ -7,7 +7,7 @@ export const handler = async (event: any) => {
     const userId = event.identity?.sub;
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
-    const artistId = event.arguments.artistId;
+    const artistId = event.arguments.artistId || event.source.artist.id;
 
     const response = await docClient.send(new GetCommand({
         TableName: musicTable,
@@ -15,11 +15,14 @@ export const handler = async (event: any) => {
             PK: `ARTIST#${artistId}`,
             SK: "METADATA",
         },
+        ProjectionExpression: "#pk, #name",
+        ExpressionAttributeNames: {
+            "#pk": "PK",
+            "#name": "name",
+        },
     }));
 
     const artist = response.Item || {};
-
-    console.log(artist);
 
     const item = {
         id: artist.PK.replace("ARTIST#", ""),

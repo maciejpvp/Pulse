@@ -76,6 +76,11 @@ export const getResolvers = (lambdas: ReturnType<typeof createLambdas>) => {
             typeName: "Album",
             fieldName: "songs",
             lambda: lambdas.getAlbumSongs.lambdaFunction,
+        },
+        {
+            typeName: "Song",
+            fieldName: "artist",
+            lambda: lambdas.getArtist.lambdaFunction,
         }
     ]
 }
