@@ -1,6 +1,8 @@
 import { BatchGetCommand, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/dynamoClient";
 import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
+import { getArtistDetails } from "../../utils/getArtistDetails";
+import { SongItem } from "../../types";
 
 const TABLE_NAME = process.env.musicTable!;
 
@@ -78,16 +80,45 @@ export const handler = async (event: any) => {
             fetchedSongs.find(song => song.PK === key.PK && song.SK === key.SK)
         );
 
+        //Check if user wants info about artist
+        const info: string[] = event.info.selectionSetList;
+
+        // Check if one artist info
+        const wantsArtist = info.some(
+            item => item.startsWith("edges/node/artist/name")
+        );
+
+        let artists: any[] | null = null;
+        if (wantsArtist) {
+            console.log("Wants artist");
+            const artistIds = songsOrdered.map(song => song.PK.replace("ARTIST#", ""));
+            artists = await getArtistDetails(artistIds, TABLE_NAME);
+            console.log("Artists: ", artists);
+        }
+
         // 5. Map to GraphQL format
-        const edges = songsOrdered.map(song => ({
-            node: {
-                id: song.SK.split("#")[1],
+        const edges = songsOrdered.map(song => {
+            const songItem: SongItem = {
+                id: song.SK.replace("SONG#", ""),
                 title: song.title,
                 duration: song.duration ?? 0,
-                artist: { id: song.PK.split("#")[1] },
-            },
-            cursor: encodeCursor({ PK: `PLAYLIST#${playlistId}`, SK: song.SK }),
-        }));
+                artist: {
+                    id: song.PK.split("#")[1],
+                    name: "",
+                }
+            };
+
+            if (artists) {
+                const songArtistId = song.PK.split("#")[1];
+                console.log("Song artist id: ", songArtistId);
+                songItem.artist.name = artists.find(artist => artist.id === songArtistId)?.name;
+            }
+
+            return {
+                node: songItem,
+                cursor: encodeCursor({ PK: `PLAYLIST#${playlistId}`, SK: song.SK }),
+            }
+        });
 
         const pageInfo = {
             endCursor: edges[edges.length - 1].cursor,

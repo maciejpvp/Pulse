@@ -9,6 +9,10 @@ export const handler = async (event: any) => {
         console.log("Source: ", event.source);
         console.log("Arguments: ", event.arguments);
         const albumId = event.source.id;
+
+        const artistId = event.source.artist.id;
+        const artistName = event.source.artist.name;
+
         if (!albumId) return {
             edges: [],
             pageInfo: {
@@ -88,7 +92,8 @@ export const handler = async (event: any) => {
                     title: song.title,
                     duration: song.duration ?? 0,
                     artist: {
-                        id: song.PK.replace("ARTIST#", ""),
+                        id: artistId,
+                        name: artistName,
                     },
                 },
                 cursor: encodeCursor({ PK: `ALBUM#${albumId}`, SK: song.SK }),
