@@ -9,14 +9,10 @@ export const handler = async (event: any) => {
     if (!userId) throw new Error("Unauthorized: no user identity found");
 
     const artistId = event.source.id;
+    const artistName = event.source.name;
 
     const limit = Math.min(event.arguments?.first || 20, 25);
     const after = event.arguments?.after;
-
-    console.log(`Arguments: ${JSON.stringify(event.source)}`);
-    console.log(`Artist ID: ${artistId}`);
-    console.log(`Limit: ${limit}`);
-    console.log(`After: ${after}`);
 
     const response = await docClient.send(new QueryCommand({
         TableName: musicTable,
@@ -29,17 +25,17 @@ export const handler = async (event: any) => {
         ExclusiveStartKey: after ? decodeCursor(after) : undefined,
     }));
 
-    console.log(`Response: ${JSON.stringify(response)}`);
-
     const songs = response.Items || [];
-
-    console.log(songs);
 
     const edges = songs.map(song => {
         return {
             node: {
                 id: song.SK.replace("SONG#", ""),
                 title: song.title,
+                artist: {
+                    id: artistId,
+                    name: artistName,
+                },
             },
             cursor: encodeCursor({ PK: song.PK, SK: song.SK }),
         }
