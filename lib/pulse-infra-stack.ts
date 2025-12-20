@@ -7,6 +7,7 @@ import { getResolvers } from "../graphql/resolvers";
 import { createLambdas } from "../infra/createLambdas";
 import { AppSyncApi } from "../infra/createAppSync";
 import { createMusicTable } from "../infra/DynamoDB/createMusicTable";
+import { createUpdateRecentPlayedSQS } from "../infra/createUpdateRecentPlayedSQS";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,6 +22,12 @@ export class PulseInfraStack extends cdk.Stack {
       stage: "dev",
       musicTable,
       songsBucket,
+    });
+
+    const updateRecentPlayedSQS = createUpdateRecentPlayedSQS(this, {
+      stage: "dev",
+      updateRecentPlayedLambda: lambdas.updateUserRecentPlayed.lambdaFunction,
+      lambdasWithAccessToSQS: [lambdas.songPlay.lambdaFunction],
     });
 
     new AppSyncApi(this, "SongsApi", {

@@ -1,7 +1,8 @@
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { docClient } from "../../utils/dynamoClient";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 const musicTable = process.env.musicTable!;
 const musicBucket = process.env.songsBucket!;
@@ -26,30 +27,19 @@ export const handler = async (event: any) => {
 
     if (!response.Item) throw new Error("Song not found");
 
-    //Update Last Listened
-
-    const now = Math.floor(Date.now() / 1000);
-    const ttl = now + 7 * 24 * 60 * 60;
-
-    const contextType = event.arguments.input.contextType;
-    const contextId = event.arguments.input.contextId;
-
-    const updateLastListened = await docClient.send(new PutCommand({
-        TableName: musicTable,
-        Item: {
-            PK: `USER#${userId}`,
-            SK: `LASTLISTENED#${contextType}#${contextId}`,
-            contextType, // ALBUM | SONG | PLAYLIST | ARTIST
-            contextId,
+    // Send event to SQS 
+    const sqs = new SQSClient({});
+    await sqs.send(new SendMessageCommand({
+        QueueUrl: process.env.UPDATE_RECENT_PLAYED_QUEUE_URL!,
+        MessageBody: JSON.stringify({
+            userId,
             artistId,
-            lastListenedAt: now,
-            ttl,
-            GSI1PK: `USER#${userId}`,
-            GSI1SK: `${now}#${contextType}#${contextId}`,
-        }
-    }))
+            songId,
+            contextType: event.arguments.input.contextType,
+            contextId: event.arguments.input.contextId,
+        }),
+    }));
 
-    console.log("Last listened updated", updateLastListened);
 
     // Give Song File
     const fileKey = response.Item.fileKey;

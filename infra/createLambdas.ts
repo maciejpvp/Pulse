@@ -159,7 +159,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
       stage,
       resources: [
         {
-          grant: (fn) => musicTable.grantReadWriteData(fn),
+          grant: (fn) => musicTable.grantReadData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
         },
@@ -168,6 +168,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envName: "songsBucket",
           envValue: songsBucket.bucketName,
         }
+      ],
+    },
+    {
+      name: "updateUserRecentPlayed",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
       ],
     },
     {
