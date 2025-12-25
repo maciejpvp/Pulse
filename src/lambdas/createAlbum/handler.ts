@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import slugify from "slugify";
 
 const musicTable = process.env.musicTable!;
 
@@ -18,6 +19,7 @@ export const handler = async (event: any) => {
         PK: `ARTIST#${artistId}`,
         SK: `ALBUM#${albumId}`,
         name,
+        slug: slugify(name),
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));

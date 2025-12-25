@@ -8,6 +8,7 @@ type Album {
 type AlbumPreview {
   id: ID!
   name: String!
+  artist: ArtistPreview!
 }
 
 input AlbumQueryInput {

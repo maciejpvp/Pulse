@@ -17,6 +17,7 @@ type Query {
   artist(artistId: ID!): Artist!
   album(input: AlbumQueryInput!): Album!
   playlist(playlistId: ID!): Playlist!
+  song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
 }
 

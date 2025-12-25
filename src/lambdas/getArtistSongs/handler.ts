@@ -32,6 +32,7 @@ export const handler = async (event: any) => {
             node: {
                 id: song.SK.replace("SONG#", ""),
                 title: song.title,
+                duration: song.duration,
                 artist: {
                     id: artistId,
                     name: artistName,

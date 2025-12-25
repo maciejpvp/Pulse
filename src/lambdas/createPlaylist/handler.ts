@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import slugify from "slugify";
 
 const musicTable = process.env.musicTable!;
 
@@ -13,7 +14,7 @@ export const handler = async (event: any) => {
     const id = uuidv4();
     const now = new Date().toISOString();
 
-    const searchKey = name.toLowerCase().trim().replace(/\s+/g, "-");
+    const slug = slugify(name);
 
     const item = {
         PK: `PLAYLIST#${id}`,
@@ -23,7 +24,7 @@ export const handler = async (event: any) => {
         createdAt: now,
         visibility: "PUBLIC", // For now only public playlists are supported 
         GSI1PK: "PLAYLIST",
-        GSI1SK: searchKey,
+        GSI1SK: slug,
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));

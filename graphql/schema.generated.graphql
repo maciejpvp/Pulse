@@ -8,6 +8,7 @@ type Album {
 type AlbumPreview {
   id: ID!
   name: String!
+  artist: ArtistPreview!
 }
 
 input AlbumQueryInput {
@@ -88,6 +89,7 @@ type Query {
   artist(artistId: ID!): Artist!
   album(input: AlbumQueryInput!): Album!
   playlist(playlistId: ID!): Playlist!
+  song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
 }
 
@@ -114,6 +116,7 @@ type Song {
 type SongPreview {
   id: ID!
   title: String!
+  artistId: ID!
 }
 
 input SongPlayInput {

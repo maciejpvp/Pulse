@@ -8,6 +8,7 @@ type Song {
 type SongPreview {
   id: ID!
   title: String!
+  artistId: ID!
 }
 
 input SongPlayInput {

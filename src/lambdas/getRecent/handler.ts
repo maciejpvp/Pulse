@@ -93,6 +93,7 @@ export const handler = async (event: any) => {
             return {
                 __typename: "SongPreview",
                 id: item.SK.split("#")[1],
+                artistId: item.PK.split("#")[1],
                 title: item.title,
             };
         }
@@ -102,6 +103,10 @@ export const handler = async (event: any) => {
                 __typename: "AlbumPreview",
                 id: item.SK.split("#")[1],
                 name: item.name,
+                artist: {
+                    id: item.PK.split("#")[1],
+                    name: "#Not Supported",
+                }
             };
         }
         // Playlist

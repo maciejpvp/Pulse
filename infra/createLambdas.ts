@@ -111,6 +111,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
+      name: "getSongItem",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
       name: "getArtistSongs",
       stage,
       resources: [
