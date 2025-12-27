@@ -123,6 +123,7 @@ export const handler = async (event: any) => {
                 __typename: "ArtistPreview",
                 id: item.PK.split("#")[1],
                 name: item.name,
+                avatarUrl: item.avatarUrl,
             };
         }
 

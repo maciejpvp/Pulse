@@ -36,19 +36,7 @@ type Artist {
 type ArtistPreview {
   id: ID!
   name: String!
-}
-
-type S3Fields {
-  bucket: String
-  key: String
-  Policy: String
-  X_Amz_Algorithm: String
-  X_Amz_Credential: String
-  X_Amz_Date: String
-  X_Amz_Security_Token: String
-  X_Amz_Signature: String
-  Content_Type: String
-  x_amz_meta_artistid: String
+  avatarUrl: String
 }
 
 type CreateArtistResponse {
