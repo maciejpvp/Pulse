@@ -27,7 +27,7 @@ type Mutation {
   """
   songPlay(input: SongPlayInput!): String!
   songUpload(input: SongUploadInput!): UploadUrlResponse!
-  artistCreate(name: String!): Artist!
+  artistCreate(name: String!): CreateArtistResponse!
   albumCreate(name: String!, artistId: ID!): Album!
   playlistCreate(name: String!): Playlist!
   playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!

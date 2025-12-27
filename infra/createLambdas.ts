@@ -4,11 +4,12 @@ import { CreateLambda, CreateLambdaProps } from "../constructs/CreateLambda";
 type Props = {
   musicTable: aws_dynamodb.Table;
   songsBucket: aws_s3.Bucket;
+  picturesBucket: aws_s3.Bucket;
   stage: string;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { musicTable, songsBucket, stage } = props;
+  const { musicTable, songsBucket, picturesBucket, stage } = props;
 
   const lambdaConfig: CreateLambdaProps[] = [
     {
@@ -63,6 +64,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
           grant: (fn) => musicTable.grantWriteData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
+        },
+        {
+          grant: (fn) => picturesBucket.grantWrite(fn),
+          envName: "picturesBucket",
+          envValue: picturesBucket.bucketName,
         },
       ],
     },
@@ -202,7 +208,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envValue: musicTable.tableName,
         },
       ],
-    }
+    },
   ];
 
   const lambdas = Object.fromEntries(

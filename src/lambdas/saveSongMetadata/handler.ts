@@ -1,11 +1,12 @@
 import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { docClient } from "../../utils/dynamoClient";
-import { PutCommand, TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
+import { TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
+import { S3Event } from "aws-lambda";
 
 const s3 = new S3Client({});
 const musicTable = process.env.musicTable!;
 
-export const handler = async (event: any) => {
+export const handler = async (event: S3Event) => {
     const { v4: uuidv4 } = await import("uuid");
 
     for (const record of event.Records) {

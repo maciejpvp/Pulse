@@ -8,6 +8,7 @@ import { createLambdas } from "../infra/createLambdas";
 import { AppSyncApi } from "../infra/createAppSync";
 import { createMusicTable } from "../infra/DynamoDB/createMusicTable";
 import { createUpdateRecentPlayedSQS } from "../infra/createUpdateRecentPlayedSQS";
+import { createPicturesBucket } from "../infra/s3/createPicturesBucket";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,11 +18,13 @@ export class PulseInfraStack extends cdk.Stack {
 
     const musicTable = createMusicTable({ stack: this, stage: "dev" });
     const songsBucket = createSongsBucket(this, { musicTable });
+    const picturesBucket = createPicturesBucket(this, { table: musicTable });
 
     const lambdas: ReturnType<typeof createLambdas> = createLambdas(this, {
       stage: "dev",
       musicTable,
       songsBucket,
+      picturesBucket,
     });
 
     const updateRecentPlayedSQS = createUpdateRecentPlayedSQS(this, {

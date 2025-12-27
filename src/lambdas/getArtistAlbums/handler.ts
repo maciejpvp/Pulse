@@ -31,6 +31,16 @@ export const handler = async (event: any) => {
 
     console.log(`Response: ${JSON.stringify(response)}`);
 
+    if (response.Items?.length === 0) {
+        return {
+            edges: [],
+            pageInfo: {
+                endCursor: null,
+                hasNextPage: false,
+            },
+        };
+    }
+
     const albums = response.Items || [];
 
     console.log(albums);

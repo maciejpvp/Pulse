@@ -1,6 +1,6 @@
 import { Stack, RemovalPolicy } from "aws-cdk-lib";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import { CreateLambda } from "../constructs/CreateLambda";
+import { CreateLambda } from "../../constructs/CreateLambda";
 import * as aws_dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
 

@@ -30,6 +30,7 @@ type Artist {
   name: String!
   songs(first: Int = 10, after: String): SongConnection!
   albums(first: Int = 10, after: String): AlbumConnection!
+  avatarUrl: String
 }
 
 type ArtistPreview {
@@ -37,6 +38,24 @@ type ArtistPreview {
   name: String!
 }
 
+type S3Fields {
+  bucket: String
+  key: String
+  Policy: String
+  X_Amz_Algorithm: String
+  X_Amz_Credential: String
+  X_Amz_Date: String
+  X_Amz_Security_Token: String
+  X_Amz_Signature: String
+  Content_Type: String
+  x_amz_meta_artistid: String
+}
+
+type CreateArtistResponse {
+  artist: Artist!
+  profilePictureURL: String!
+  fields: String!
+}
 enum ContextType {
   ALBUM
   PLAYLIST
@@ -99,7 +118,7 @@ type Mutation {
   """
   songPlay(input: SongPlayInput!): String!
   songUpload(input: SongUploadInput!): UploadUrlResponse!
-  artistCreate(name: String!): Artist!
+  artistCreate(name: String!): CreateArtistResponse!
   albumCreate(name: String!, artistId: ID!): Album!
   playlistCreate(name: String!): Playlist!
   playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!

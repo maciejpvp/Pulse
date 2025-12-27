@@ -25,6 +25,16 @@ export const handler = async (event: any) => {
         ExclusiveStartKey: after ? decodeCursor(after) : undefined,
     }));
 
+    if (response.Items?.length === 0) {
+        return {
+            edges: [],
+            pageInfo: {
+                endCursor: null,
+                hasNextPage: false,
+            },
+        };
+    }
+
     const songs = response.Items || [];
 
     const edges = songs.map(song => {

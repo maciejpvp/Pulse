@@ -18,6 +18,7 @@ export interface CreateLambdaProps {
   env?: Record<string, string>;
   resources?: ResourceConfig[];
   timeoutSec?: number;
+  nodeModules?: string[];
 }
 
 export class CreateLambda extends Construct {
@@ -42,6 +43,12 @@ export class CreateLambda extends Construct {
         ...env,
       },
       timeout: cdk.Duration.seconds(timeoutSec),
+      bundling: props.nodeModules
+        ? {
+          nodeModules: props.nodeModules,
+          forceDockerBundling: true,
+        }
+        : undefined,
     });
 
     for (const { grant, envName, envValue } of resources) {
