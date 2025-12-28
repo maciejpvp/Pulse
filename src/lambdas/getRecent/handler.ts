@@ -84,8 +84,6 @@ export const handler = async (event: any) => {
 
     const items = await batchGetItems(batch);
 
-    console.log(items);
-
     // Mapping to GraphQL Schema
 
     const recentPlayedItems = items.map(item => {

@@ -50,10 +50,12 @@ export const handler = async (event: any) => {
         },
         createdAt: now,
         visibility: "PUBLIC",
-        imageUrl: presignedPost.uploadUrl,
-        fields: presignedPost.fields,
     }
 
-    return playlistItem;
+    return {
+        playlist: playlistItem,
+        imageUrl: presignedPost.uploadUrl,
+        fields: presignedPost.fields,
+    };
 };
 

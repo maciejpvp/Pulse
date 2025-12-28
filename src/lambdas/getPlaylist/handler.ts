@@ -1,3 +1,4 @@
+import { S3_PUBLIC_URL } from "../../constants";
 import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -27,7 +28,7 @@ export const handler = async (event: any) => {
     const playlist = {
         id: item.PK.replace("PLAYLIST#", ""),
         name: item.name,
-        imageUrl: item.imageUrl,
+        imageUrl: S3_PUBLIC_URL + item.imageUrl,
         creator: {
             id: item.creatorId,
         },

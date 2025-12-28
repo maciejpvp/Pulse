@@ -1,3 +1,4 @@
+import { S3_PUBLIC_URL } from "../../constants";
 import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
 import { docClient } from "../../utils/dynamoClient";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
@@ -50,6 +51,7 @@ export const handler = async (event: any) => {
             node: {
                 id: album.SK.replace("ALBUM#", ""),
                 name: album.name,
+                imageUrl: S3_PUBLIC_URL + album.imageUrl,
             },
             cursor: encodeCursor({ PK: album.PK, SK: album.SK }),
         }
