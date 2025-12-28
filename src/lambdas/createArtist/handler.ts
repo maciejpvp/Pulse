@@ -26,7 +26,6 @@ export const handler = async (event: any) => {
         createdAt: now,
         GSI1PK: "ARTIST",
         GSI1SK: slug,
-        avatarStatus: "NONE", // Can be either NONE or UPLOADED
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
@@ -36,7 +35,8 @@ export const handler = async (event: any) => {
         bucket: picturesBucket,
         key: `raw/artist/${artistId}/avatar`,
         metadata: {
-            artistId,
+            pk: `ARTIST#${artistId}`,
+            sk: "METADATA",
         },
     });
 

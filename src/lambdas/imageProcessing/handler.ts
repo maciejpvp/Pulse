@@ -35,9 +35,13 @@ export const handler = async (event: S3Event) => {
                 throw new Error(`Empty body for key: ${key}`);
             }
 
-            const artistId = response.Metadata?.artistid;
-            if (!artistId) {
-                console.warn(`No artistId found in metadata for: ${key}`);
+            const PK = response.Metadata?.pk;
+            const SK = response.Metadata?.sk;
+
+            console.log(PK, SK);
+
+            if (!PK || !SK) {
+                console.warn(`No PK or SK found in metadata for: ${key}`);
             }
 
             // 3. Convert stream to Buffer using built-in SDK v3 methods
@@ -67,23 +71,17 @@ export const handler = async (event: S3Event) => {
             );
 
             // 6. Update DynamoDB
-            if (artistId) {
+            if (PK && SK) {
                 await docClient.send(
                     new UpdateCommand({
                         TableName: musicTable,
                         Key: {
-                            PK: `ARTIST#${artistId}`,
-                            SK: "METADATA",
+                            PK,
+                            SK,
                         },
-                        UpdateExpression: `
-                            SET avatarUrl = :url,
-                                avatarStatus = :status,
-                                avatarUpdatedAt = :now
-                        `,
+                        UpdateExpression: "SET avatarUrl = :url",
                         ExpressionAttributeValues: {
                             ":url": processedKey,
-                            ":status": "UPLOADED",
-                            ":now": Date.now(),
                         },
                     })
                 );
