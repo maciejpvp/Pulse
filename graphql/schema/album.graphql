@@ -2,6 +2,7 @@ type Album {
   id: ID!
   name: String!
   artist: ArtistPreview!
+  imageUrl: String
   songs(first: Int = 10, after: String): SongConnection!
 }
 
@@ -9,6 +10,7 @@ type AlbumPreview {
   id: ID!
   name: String!
   artist: ArtistPreview!
+  imageUrl: String
 }
 
 input AlbumQueryInput {
@@ -24,4 +26,10 @@ type AlbumEdge {
 type AlbumConnection {
   edges: [AlbumEdge!]!
   pageInfo: PageInfo!
+}
+
+type CreateAlbumResponse {
+  album: Album!
+  imageUrl: String!
+  fields: String!
 }

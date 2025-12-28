@@ -1,6 +1,7 @@
 import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { getArtistDetails } from "../../utils/getArtistDetails";
+import { S3_PUBLIC_URL } from "../../constants";
 
 const musicTable = process.env.musicTable!;
 
@@ -36,9 +37,11 @@ export const handler = async (event: any) => {
     const album = {
         id: item.SK.split("#")[1],
         name: item.name,
+        imageUrl: S3_PUBLIC_URL + item.imageUrl,
         artist: {
             id: item.PK.split("#")[1],
             name: artistDetails?.name,
+            imageUrl: S3_PUBLIC_URL + artistDetails?.imageUrl,
         },
     };
 

@@ -51,7 +51,7 @@ export const handler = async (event: any) => {
             songs: [],
             albums: [],
         },
-        profilePictureURL: presignedPost.uploadUrl,
+        imageUrl: presignedPost.uploadUrl,
         fields: presignedPost.fields,
     };
 };

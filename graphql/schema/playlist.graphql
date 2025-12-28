@@ -10,9 +10,18 @@ type Playlist {
   createdAt: String!
   visibility: PlaylistVisibility!
   songs(first: Int = 10, after: String): SongConnection!
+  imageUrl: String
 }
 
 type PlaylistPreview {
   id: ID!
   name: String!
+  imageUrl: String
 }
+
+type CreatePlaylistResponse {
+  playlist: Playlist!
+  imageUrl: String!
+  fields: String!
+}
+

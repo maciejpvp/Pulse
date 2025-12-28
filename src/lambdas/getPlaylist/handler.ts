@@ -27,6 +27,7 @@ export const handler = async (event: any) => {
     const playlist = {
         id: item.PK.replace("PLAYLIST#", ""),
         name: item.name,
+        imageUrl: item.imageUrl,
         creator: {
             id: item.creatorId,
         },

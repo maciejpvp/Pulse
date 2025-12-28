@@ -2,8 +2,10 @@ import { v4 as uuidv4 } from "uuid";
 import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import slugify from "slugify";
+import { createGenericPresignedPost } from "../../utils/createPresignedPOST";
 
 const musicTable = process.env.musicTable!;
+const picturesBucket = process.env.picturesBucket!;
 
 export const handler = async (event: any) => {
     const { name } = event.arguments;
@@ -29,6 +31,16 @@ export const handler = async (event: any) => {
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
 
+    // Generate S3 Presigned POST URL for user to opptionaly upload Playlist Cover
+    const presignedPost = await createGenericPresignedPost({
+        bucket: picturesBucket,
+        key: `raw/playlist/${id}/cover`,
+        metadata: {
+            pk: `PLAYLIST#${id}`,
+            sk: "METADATA",
+        },
+    });
+
     const playlistItem = {
         id,
         name,
@@ -38,6 +50,8 @@ export const handler = async (event: any) => {
         },
         createdAt: now,
         visibility: "PUBLIC",
+        imageUrl: presignedPost.uploadUrl,
+        fields: presignedPost.fields,
     }
 
     return playlistItem;

@@ -1,3 +1,4 @@
+import { S3_PUBLIC_URL } from "../../constants";
 import { docClient } from "../../utils/dynamoClient";
 import { BatchGetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -103,6 +104,7 @@ export const handler = async (event: any) => {
                 __typename: "AlbumPreview",
                 id: item.SK.split("#")[1],
                 name: item.name,
+                imageUrl: S3_PUBLIC_URL + item.imageUrl,
                 artist: {
                     id: item.PK.split("#")[1],
                     name: "#Not Supported",
@@ -115,6 +117,7 @@ export const handler = async (event: any) => {
                 __typename: "PlaylistPreview",
                 id: item.PK.split("#")[1],
                 name: item.name,
+                imageUrl: S3_PUBLIC_URL + item.imageUrl,
             };
         }
         // Artist
@@ -123,7 +126,7 @@ export const handler = async (event: any) => {
                 __typename: "ArtistPreview",
                 id: item.PK.split("#")[1],
                 name: item.name,
-                avatarUrl: item.avatarUrl,
+                imageUrl: S3_PUBLIC_URL + item.imageUrl,
             };
         }
 

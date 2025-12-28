@@ -32,6 +32,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envName: "musicTable",
           envValue: musicTable.tableName,
         },
+        {
+          grant: (fn) => picturesBucket.grantWrite(fn),
+          envName: "picturesBucket",
+          envValue: picturesBucket.bucketName,
+        },
       ],
     },
     {
@@ -206,6 +211,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
           grant: (fn) => musicTable.grantWriteData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
+        },
+        {
+          grant: (fn) => picturesBucket.grantWrite(fn),
+          envName: "picturesBucket",
+          envValue: picturesBucket.bucketName,
         },
       ],
     },

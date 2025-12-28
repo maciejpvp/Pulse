@@ -79,7 +79,7 @@ export const handler = async (event: S3Event) => {
                             PK,
                             SK,
                         },
-                        UpdateExpression: "SET avatarUrl = :url",
+                        UpdateExpression: "SET imageUrl = :url",
                         ExpressionAttributeValues: {
                             ":url": processedKey,
                         },

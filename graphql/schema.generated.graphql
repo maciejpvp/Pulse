@@ -2,6 +2,7 @@ type Album {
   id: ID!
   name: String!
   artist: ArtistPreview!
+  imageUrl: String
   songs(first: Int = 10, after: String): SongConnection!
 }
 
@@ -9,6 +10,7 @@ type AlbumPreview {
   id: ID!
   name: String!
   artist: ArtistPreview!
+  imageUrl: String
 }
 
 input AlbumQueryInput {
@@ -25,23 +27,29 @@ type AlbumConnection {
   edges: [AlbumEdge!]!
   pageInfo: PageInfo!
 }
+
+type CreateAlbumResponse {
+  album: Album!
+  imageUrl: String!
+  fields: String!
+}
 type Artist {
   id: ID!
   name: String!
   songs(first: Int = 10, after: String): SongConnection!
   albums(first: Int = 10, after: String): AlbumConnection!
-  avatarUrl: String
+  imageUrl: String
 }
 
 type ArtistPreview {
   id: ID!
   name: String!
-  avatarUrl: String
+  imageUrl: String
 }
 
 type CreateArtistResponse {
   artist: Artist!
-  profilePictureURL: String!
+  imageUrl: String!
   fields: String!
 }
 enum ContextType {
@@ -70,12 +78,21 @@ type Playlist {
   createdAt: String!
   visibility: PlaylistVisibility!
   songs(first: Int = 10, after: String): SongConnection!
+  imageUrl: String
 }
 
 type PlaylistPreview {
   id: ID!
   name: String!
+  imageUrl: String
 }
+
+type CreatePlaylistResponse {
+  playlist: Playlist!
+  imageUrl: String!
+  fields: String!
+}
+
 
 type UploadUrlResponse {
   uploadUrl: String!
@@ -107,8 +124,8 @@ type Mutation {
   songPlay(input: SongPlayInput!): String!
   songUpload(input: SongUploadInput!): UploadUrlResponse!
   artistCreate(name: String!): CreateArtistResponse!
-  albumCreate(name: String!, artistId: ID!): Album!
-  playlistCreate(name: String!): Playlist!
+  albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
+  playlistCreate(name: String!): CreatePlaylistResponse!
   playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!
   playlistRemoveFromPlaylist(playlistId: ID!, songId: ID!): RemoveFromPlaylistResult!
 }

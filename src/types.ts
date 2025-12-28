@@ -7,3 +7,9 @@ export type SongItem = {
         name: string;
     };
 }
+
+export type ArtistPreviewType = {
+    id: string;
+    name: string;
+    imageUrl?: string;
+}

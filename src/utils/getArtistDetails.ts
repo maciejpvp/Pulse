@@ -1,5 +1,7 @@
 import { BatchGetCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "./dynamoClient";
+import { ArtistPreviewType } from "../types";
+import { S3_PUBLIC_URL } from "../constants";
 
 const buildArtistKeys = (ids: string[]) => {
     return ids.map(id => {
@@ -10,11 +12,12 @@ const buildArtistKeys = (ids: string[]) => {
     })
 }
 
-const buildArtistPreview = (artists: { PK: string, name: string }[]) => {
+const buildArtistPreview = (artists: { PK: string, name: string, imageUrl: string }[]): ArtistPreviewType[] => {
     return artists.map(artist => {
         return {
             id: artist.PK.replace("ARTIST#", ""),
             name: artist.name,
+            imageUrl: S3_PUBLIC_URL + artist.imageUrl,
         }
     })
 }
@@ -32,10 +35,11 @@ const fetchArtistDetails = async (artistKeys: { PK: string, SK: string }[], tabl
                 RequestItems: {
                     [tableName]: {
                         Keys: batch,
-                        ProjectionExpression: "#name, #pk",
+                        ProjectionExpression: "#name, #pk, #imageUrl",
                         ExpressionAttributeNames: {
                             "#name": "name",
-                            "#pk": "PK"
+                            "#pk": "PK",
+                            "#imageUrl": "imageUrl"
                         }
                     },
                 },

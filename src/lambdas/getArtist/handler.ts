@@ -1,9 +1,9 @@
+import { S3_PUBLIC_URL } from "../../constants";
 import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 
 const musicTable = process.env.musicTable!;
 
-const S3_PUBLIC_URL = "https://pulseinfrastack-picturesbucketd39e9407-yv0theoekm4x.s3.eu-central-1.amazonaws.com/";
 
 export const handler = async (event: any) => {
     const userId = event.identity?.sub;
@@ -17,11 +17,11 @@ export const handler = async (event: any) => {
             PK: `ARTIST#${artistId}`,
             SK: "METADATA",
         },
-        ProjectionExpression: "#pk, #name, #avatarUrl",
+        ProjectionExpression: "#pk, #name, #imageUrl",
         ExpressionAttributeNames: {
             "#pk": "PK",
             "#name": "name",
-            "#avatarUrl": "avatarUrl",
+            "#imageUrl": "imageUrl",
         },
     }));
 
@@ -32,7 +32,7 @@ export const handler = async (event: any) => {
     const item = {
         id: artist.PK.replace("ARTIST#", ""),
         name: artist.name,
-        avatarUrl: S3_PUBLIC_URL + artist.avatarUrl,
+        imageUrl: S3_PUBLIC_URL + artist.imageUrl,
     };
 
     return item;
