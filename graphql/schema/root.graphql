@@ -1,18 +1,3 @@
-type UploadUrlResponse {
-  uploadUrl: String!
-}
-
-type AddToPlaylistResult {
-  playlistId: ID!
-  songId: ID!
-}
-
-type RemoveFromPlaylistResult {
-  playlistId: ID!
-  songId: ID!
-  removed: Boolean!
-}
-
 type Query {
   artist(artistId: ID!): Artist!
   album(input: AlbumQueryInput!): Album!
@@ -26,10 +11,10 @@ type Mutation {
   Get S3 upload URL to upload mp3 file into bucket
   """
   songPlay(input: SongPlayInput!): String!
-  songUpload(input: SongUploadInput!): UploadUrlResponse!
+  songUpload(input: SongUploadInput!): SongUploadResponse!
   artistCreate(name: String!): CreateArtistResponse!
   albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
   playlistCreate(name: String!): CreatePlaylistResponse!
-  playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!
-  playlistRemoveFromPlaylist(playlistId: ID!, songId: ID!): RemoveFromPlaylistResult!
+  playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
+  playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
 }

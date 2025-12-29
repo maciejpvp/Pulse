@@ -77,8 +77,10 @@ export const handler = async (event: any) => {
 
         // 4. Preserve original playlist order
         const songsOrdered = keys.map(key =>
-            fetchedSongs.find(song => song.PK === key.PK && song.SK === key.SK)
-        );
+            fetchedSongs.find(song => (song?.PK ?? "") === key.PK && (song?.SK ?? "") === key.SK)
+        ).filter(song => song !== undefined);
+
+        console.log("Songs ordered: ", songsOrdered);
 
         //Check if user wants info about artist
         const info: string[] = event.info.selectionSetList;
@@ -121,7 +123,7 @@ export const handler = async (event: any) => {
         });
 
         const pageInfo = {
-            endCursor: edges[edges.length - 1].cursor,
+            endCursor: edges.at(-1)?.cursor ?? null,
             hasNextPage: !!playlistSongsRes.LastEvaluatedKey,
         };
 

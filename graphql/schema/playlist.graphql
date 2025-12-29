@@ -25,3 +25,27 @@ type CreatePlaylistResponse {
   fields: String!
 }
 
+input SongInput {
+  id: ID!
+  artistId: ID!
+}
+
+input PlaylistAddSongInput {
+  playlistId: ID!
+  songs: [SongInput!]
+}
+
+input PlaylistRemoveSongInput {
+  playlistId: ID!
+  songsIds: [ID!]
+}
+
+type PlaylistAddSongResult {
+  playlistId: ID!
+  songsIds: [ID!]
+}
+
+type PlaylistRemoveSongResult {
+  playlistId: ID!
+  songsIds: [ID!]
+}

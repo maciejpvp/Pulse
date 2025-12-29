@@ -93,20 +93,29 @@ type CreatePlaylistResponse {
   fields: String!
 }
 
-
-type UploadUrlResponse {
-  uploadUrl: String!
+input SongInput {
+  id: ID!
+  artistId: ID!
 }
 
-type AddToPlaylistResult {
+input PlaylistAddSongInput {
   playlistId: ID!
-  songId: ID!
+  songs: [SongInput!]
 }
 
-type RemoveFromPlaylistResult {
+input PlaylistRemoveSongInput {
   playlistId: ID!
-  songId: ID!
-  removed: Boolean!
+  songsIds: [ID!]
+}
+
+type PlaylistAddSongResult {
+  playlistId: ID!
+  songsIds: [ID!]
+}
+
+type PlaylistRemoveSongResult {
+  playlistId: ID!
+  songsIds: [ID!]
 }
 
 type Query {
@@ -122,12 +131,12 @@ type Mutation {
   Get S3 upload URL to upload mp3 file into bucket
   """
   songPlay(input: SongPlayInput!): String!
-  songUpload(input: SongUploadInput!): UploadUrlResponse!
+  songUpload(input: SongUploadInput!): SongUploadResponse!
   artistCreate(name: String!): CreateArtistResponse!
   albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
   playlistCreate(name: String!): CreatePlaylistResponse!
-  playlistAddToPlaylist(playlistId: ID!, songId: ID!, songArtistId: ID!): AddToPlaylistResult!
-  playlistRemoveFromPlaylist(playlistId: ID!, songId: ID!): RemoveFromPlaylistResult!
+  playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
+  playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
 }
 
 type Song {
@@ -165,6 +174,10 @@ type SongEdge {
 type SongConnection {
   edges: [SongEdge!]!
   pageInfo: PageInfo!
+}
+
+type SongUploadResponse {
+  uploadUrl: String!
 }
 type User {
   id: ID!

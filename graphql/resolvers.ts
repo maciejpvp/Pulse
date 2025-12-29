@@ -14,12 +14,12 @@ export const getResolvers = (lambdas: ReturnType<typeof createLambdas>) => {
         },
         {
             typeName: "Mutation",
-            fieldName: "playlistAddToPlaylist",
+            fieldName: "playlistAddSong",
             lambda: lambdas.addToPlaylist.lambdaFunction,
         },
         {
             typeName: "Mutation",
-            fieldName: "playlistRemoveFromPlaylist",
+            fieldName: "playlistRemoveSong",
             lambda: lambdas.removeFromPlaylist.lambdaFunction,
         },
         {

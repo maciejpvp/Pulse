@@ -44,7 +44,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
       stage,
       resources: [
         {
-          grant: (fn) => musicTable.grantWriteData(fn),
+          grant: (fn) => musicTable.grantReadWriteData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
         },
@@ -55,7 +55,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
       stage,
       resources: [
         {
-          grant: (fn) => musicTable.grantWriteData(fn),
+          grant: (fn) => musicTable.grantReadWriteData(fn),
           envName: "musicTable",
           envValue: musicTable.tableName,
         },

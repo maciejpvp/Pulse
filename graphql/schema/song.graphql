@@ -34,3 +34,7 @@ type SongConnection {
   edges: [SongEdge!]!
   pageInfo: PageInfo!
 }
+
+type SongUploadResponse {
+  uploadUrl: String!
+}
