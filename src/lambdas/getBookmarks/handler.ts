@@ -9,7 +9,5 @@ export const handler = async (event: any) => {
 
     const bookmarks = await getBookmarksForUser({ userId, limit, after });
 
-    return {
-        bookmarks
-    };
+    return bookmarks;
 }

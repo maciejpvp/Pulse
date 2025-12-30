@@ -159,7 +159,7 @@ type Query {
   playlist(playlistId: ID!): Playlist!
   song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
-  bookmarks: BookmarkResponse!
+  bookmarks: BookmarkConnection!
 }
 
 type Mutation {
