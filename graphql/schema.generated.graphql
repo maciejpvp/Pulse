@@ -52,6 +52,41 @@ type CreateArtistResponse {
   imageUrl: String!
   fields: String!
 }
+union BookmarkItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview
+
+type BookmarkConnection {
+    edges: [BookmarkEdge!]
+    pageInfo: PageInfo!
+}
+
+type BookmarkEdge {
+    cursor: String!
+    node: BookmarkItem!
+}
+
+type BookmarkResponse {
+    bookmarks: BookmarkConnection!
+}
+
+input BookmarkInput {
+    limit: Int
+    after: String
+}
+
+input BookmarkItemInput {
+    itemId: ID!
+    artistId: ID 
+    itemType: ContextType!
+}
+
+input BookmarkAddInput {
+    items: [BookmarkItemInput!]
+}
+
+input BookmarkRemoveInput {
+    items: [String!]
+}
+
 enum ContextType {
   ALBUM
   PLAYLIST
@@ -124,6 +159,7 @@ type Query {
   playlist(playlistId: ID!): Playlist!
   song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
+  bookmarks: BookmarkResponse!
 }
 
 type Mutation {
@@ -137,6 +173,8 @@ type Mutation {
   playlistCreate(name: String!): CreatePlaylistResponse!
   playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
+  bookmarkAdd(input: BookmarkAddInput!): Boolean!
+  bookmarkRemove(input: BookmarkRemoveInput!): Boolean!
 }
 
 type Song {

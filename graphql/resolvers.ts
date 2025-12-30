@@ -1,91 +1,18 @@
 import { createLambdas } from "../infra/createLambdas"
+import { albumResolvers } from "./resolvers/album"
+import { artistResolvers } from "./resolvers/artist"
+import { playlistResolvers } from "./resolvers/playlist"
+import { songResolvers } from "./resolvers/song"
+import { userResolvers } from "./resolvers/user"
+import { bookmarkResolvers } from "./resolvers/bookmark"
 
 export const getResolvers = (lambdas: ReturnType<typeof createLambdas>) => {
     return [
-        {
-            typeName: "Mutation",
-            fieldName: "songUpload",
-            lambda: lambdas.getUploadUrl.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "playlistCreate",
-            lambda: lambdas.createPlaylist.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "playlistAddSong",
-            lambda: lambdas.addToPlaylist.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "playlistRemoveSong",
-            lambda: lambdas.removeFromPlaylist.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "artistCreate",
-            lambda: lambdas.createArtist.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "albumCreate",
-            lambda: lambdas.createAlbum.lambdaFunction,
-        },
-        {
-            typeName: "Mutation",
-            fieldName: "songPlay",
-            lambda: lambdas.songPlay.lambdaFunction,
-        },
-        {
-            typeName: "Query",
-            fieldName: "artist",
-            lambda: lambdas.getArtist.lambdaFunction,
-        },
-        {
-            typeName: "Query",
-            fieldName: "playlist",
-            lambda: lambdas.getPlaylist.lambdaFunction,
-        },
-        {
-            typeName: "Query",
-            fieldName: "album",
-            lambda: lambdas.getAlbum.lambdaFunction,
-        },
-        {
-            typeName: "Query",
-            fieldName: "recentPlayed",
-            lambda: lambdas.getRecent.lambdaFunction,
-        },
-        {
-            typeName: "Query",
-            fieldName: "song",
-            lambda: lambdas.getSongItem.lambdaFunction,
-        },
-        {
-            typeName: "Artist",
-            fieldName: "songs",
-            lambda: lambdas.getArtistSongs.lambdaFunction,
-        },
-        {
-            typeName: "Artist",
-            fieldName: "albums",
-            lambda: lambdas.getArtistAlbums.lambdaFunction,
-        },
-        {
-            typeName: "Playlist",
-            fieldName: "songs",
-            lambda: lambdas.getPlaylistSongs.lambdaFunction,
-        },
-        {
-            typeName: "Album",
-            fieldName: "songs",
-            lambda: lambdas.getAlbumSongs.lambdaFunction,
-        },
-        {
-            typeName: "Song",
-            fieldName: "artist",
-            lambda: lambdas.getArtist.lambdaFunction,
-        }
+        ...albumResolvers(lambdas),
+        ...artistResolvers(lambdas),
+        ...playlistResolvers(lambdas),
+        ...songResolvers(lambdas),
+        ...userResolvers(lambdas),
+        ...bookmarkResolvers(lambdas),
     ]
 }

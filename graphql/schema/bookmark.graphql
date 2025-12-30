@@ -1,0 +1,34 @@
+union BookmarkItem = AlbumPreview | SongPreview | ArtistPreview | PlaylistPreview
+
+type BookmarkConnection {
+    edges: [BookmarkEdge!]
+    pageInfo: PageInfo!
+}
+
+type BookmarkEdge {
+    cursor: String!
+    node: BookmarkItem!
+}
+
+type BookmarkResponse {
+    bookmarks: BookmarkConnection!
+}
+
+input BookmarkInput {
+    limit: Int
+    after: String
+}
+
+input BookmarkItemInput {
+    itemId: ID!
+    artistId: ID 
+    itemType: ContextType!
+}
+
+input BookmarkAddInput {
+    items: [BookmarkItemInput!]
+}
+
+input BookmarkRemoveInput {
+    items: [String!]
+}

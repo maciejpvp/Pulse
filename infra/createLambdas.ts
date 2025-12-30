@@ -219,6 +219,39 @@ export const createLambdas = (stack: Stack, props: Props) => {
         },
       ],
     },
+    {
+      name: "addBookmark",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "removeBookmark",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getBookmarks",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    }
   ];
 
   const lambdas = Object.fromEntries(
