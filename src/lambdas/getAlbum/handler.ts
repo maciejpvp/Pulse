@@ -2,7 +2,6 @@ import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { getArtistDetails } from "../../utils/getArtistDetails";
 import { S3_PUBLIC_URL } from "../../constants";
-import { SamlConsolePrincipal } from "aws-cdk-lib/aws-iam";
 import { checkIsItemBookmarked } from "../../services/bookmark/checkIsItemBookmarked";
 
 const musicTable = process.env.musicTable!;

@@ -1,0 +1,8 @@
+input SearchInput {
+    query: String!
+    type: String!
+}
+
+type SearchResponse {
+    items: [BookmarkItem!]!
+}

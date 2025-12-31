@@ -2,6 +2,7 @@ import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { docClient } from "../../utils/dynamoClient";
 import { TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { S3Event } from "aws-lambda";
+import { normalizeName } from "../../utils/normalizeName";
 
 const s3 = new S3Client({});
 const musicTable = process.env.musicTable!;
@@ -29,7 +30,7 @@ export const handler = async (event: S3Event) => {
 
         const songId = uuidv4();
 
-        const searchKey = title.toLowerCase().trim().replace(/\s+/g, "-");
+        const searchKey = normalizeName(title);
 
         const item = {
             PK: `ARTIST#${artistId}`,

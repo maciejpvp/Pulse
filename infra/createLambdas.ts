@@ -251,6 +251,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envValue: musicTable.tableName,
         },
       ],
+    },
+    {
+      name: "searchByName",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
     }
   ];
 

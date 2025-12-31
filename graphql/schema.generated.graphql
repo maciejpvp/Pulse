@@ -163,6 +163,7 @@ type Query {
   song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
   bookmarks: BookmarkConnection!
+  search(input: SearchInput!): SearchResponse
 }
 
 type Mutation {
@@ -180,6 +181,14 @@ type Mutation {
   bookmarkRemove(input: BookmarkRemoveInput!): Boolean!
 }
 
+input SearchInput {
+    query: String!
+    type: String!
+}
+
+type SearchResponse {
+    items: [BookmarkItem!]!
+}
 type Song {
   id: ID!
   title: String!

@@ -5,6 +5,7 @@ type Query {
   song(songId: ID!, artistId: ID!): Song!
   recentPlayed: [RecentPlayedItem!]!
   bookmarks: BookmarkConnection!
+  search(input: SearchInput!): SearchResponse
 }
 
 type Mutation {

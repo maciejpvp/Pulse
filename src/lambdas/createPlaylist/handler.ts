@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
-import slugify from "slugify";
 import { createGenericPresignedPost } from "../../utils/createPresignedPOST";
+import { normalizeName } from "../../utils/normalizeName";
 
 const musicTable = process.env.musicTable!;
 const picturesBucket = process.env.picturesBucket!;
@@ -16,7 +16,7 @@ export const handler = async (event: any) => {
     const id = uuidv4();
     const now = new Date().toISOString();
 
-    const slug = slugify(name);
+    const slug = normalizeName(name);
 
     const item = {
         PK: `PLAYLIST#${id}`,

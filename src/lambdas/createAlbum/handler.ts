@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
-import slugify from "slugify";
 import { createGenericPresignedPost } from "../../utils/createPresignedPOST";
+import { normalizeName } from "../../utils/normalizeName";
 
 const musicTable = process.env.musicTable!;
 const picturesBucket = process.env.picturesBucket!;
@@ -17,11 +17,15 @@ export const handler = async (event: any) => {
     const albumId = uuidv4();
     const now = new Date().toISOString();
 
+    const slug = normalizeName(name);
+
     const item = {
         PK: `ARTIST#${artistId}`,
         SK: `ALBUM#${albumId}`,
         name,
-        slug: slugify(name),
+        slug,
+        GSI1PK: "ALBUM",
+        GSI1SK: slug,
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
