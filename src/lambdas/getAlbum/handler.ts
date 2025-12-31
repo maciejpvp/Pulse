@@ -2,6 +2,8 @@ import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { getArtistDetails } from "../../utils/getArtistDetails";
 import { S3_PUBLIC_URL } from "../../constants";
+import { SamlConsolePrincipal } from "aws-cdk-lib/aws-iam";
+import { checkIsItemBookmarked } from "../../services/bookmark/checkIsItemBookmarked";
 
 const musicTable = process.env.musicTable!;
 
@@ -32,7 +34,11 @@ export const handler = async (event: any) => {
 
     const item = response.Item || {};
 
-    console.log(item);
+    console.log("Info: ", info);
+    const wantsBookmarked = info.some((field) => {
+        return field === "isBookmarked";
+    });
+
 
     const album = {
         id: item.SK.split("#")[1],
@@ -43,7 +49,12 @@ export const handler = async (event: any) => {
             name: artistDetails?.name,
             imageUrl: S3_PUBLIC_URL + artistDetails?.imageUrl,
         },
+        isBookmarked: false,
     };
+
+    if (wantsBookmarked) {
+        album.isBookmarked = await checkIsItemBookmarked(userId, albumId);
+    }
 
     return album;
 };

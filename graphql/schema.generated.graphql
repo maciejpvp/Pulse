@@ -3,6 +3,7 @@ type Album {
   name: String!
   artist: ArtistPreview!
   imageUrl: String
+  isBookmarked: Boolean!
   songs(first: Int = 10, after: String): SongConnection!
 }
 
@@ -39,6 +40,7 @@ type Artist {
   songs(first: Int = 10, after: String): SongConnection!
   albums(first: Int = 10, after: String): AlbumConnection!
   imageUrl: String
+  isBookmarked: Boolean!
 }
 
 type ArtistPreview {
@@ -114,6 +116,7 @@ type Playlist {
   visibility: PlaylistVisibility!
   songs(first: Int = 10, after: String): SongConnection!
   imageUrl: String
+  isBookmarked: Boolean!
 }
 
 type PlaylistPreview {

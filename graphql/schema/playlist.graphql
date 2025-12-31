@@ -11,6 +11,7 @@ type Playlist {
   visibility: PlaylistVisibility!
   songs(first: Int = 10, after: String): SongConnection!
   imageUrl: String
+  isBookmarked: Boolean!
 }
 
 type PlaylistPreview {

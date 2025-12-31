@@ -1,4 +1,5 @@
 import { S3_PUBLIC_URL } from "../../constants";
+import { checkIsItemBookmarked } from "../../services/bookmark/checkIsItemBookmarked";
 import { docClient } from "../../utils/dynamoClient";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -23,7 +24,11 @@ export const handler = async (event: any) => {
 
     const item = response.Item || {};
 
-    console.log(item);
+    // Check if user wants isBookmarked
+    const info: string[] = event.info.selectionSetList;
+    const wantsBookmarked = info.some((field) => {
+        return field === "isBookmarked";
+    })
 
     const playlist = {
         id: item.PK.replace("PLAYLIST#", ""),
@@ -34,8 +39,12 @@ export const handler = async (event: any) => {
         },
         createdAt: item.createdAt,
         visibility: item.visibility,
+        isBookmarked: false,
     };
+
+    if (wantsBookmarked) {
+        playlist.isBookmarked = await checkIsItemBookmarked(userId, playlistId);
+    }
 
     return playlist;
 };
-

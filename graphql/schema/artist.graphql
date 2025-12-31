@@ -4,6 +4,7 @@ type Artist {
   songs(first: Int = 10, after: String): SongConnection!
   albums(first: Int = 10, after: String): AlbumConnection!
   imageUrl: String
+  isBookmarked: Boolean!
 }
 
 type ArtistPreview {

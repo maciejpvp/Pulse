@@ -19,6 +19,7 @@ type Item = {
 }
 
 function validateInput(input: any) {
+    console.log("input: ", input);
     if (!input.items) throw new Error("Missing items");
 
     const items = input.items as Item[];
@@ -28,7 +29,13 @@ function validateInput(input: any) {
 
     if (items.some((item) => !isValidUUID(item.itemId))) throw new Error("Invalid item ID");
     // artistId is required for songs and albums
-    if (items.some((item) => item.itemType === "SONG" || item.itemType === "ALBUM") && !items.some((item) => !isValidUUID(item.artistId))) throw new Error("Invalid artist ID");
+    const hasInvalidArtist = items.some((item) =>
+        (item.itemType === "SONG" || item.itemType === "ALBUM") && !isValidUUID(item.artistId)
+    );
+
+    if (hasInvalidArtist) {
+        throw new Error("Invalid artist ID");
+    }
 
     return items;
 }
