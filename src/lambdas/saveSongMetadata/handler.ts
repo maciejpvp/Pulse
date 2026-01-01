@@ -37,10 +37,21 @@ export const handler = async (event: S3Event) => {
             SK: `SONG#${songId}`,
             title: title,
             duration,
+            imageUrl: null as string | null,
             fileKey: key,
             GSI1PK: "SONG",
             GSI1SK: searchKey,
         };
+
+        //add imageUrl
+        let imageUrl: string | null = null;
+        if (albumId) {
+            imageUrl = `processed/album/${albumId}/cover.webp`
+        } else {
+            imageUrl = `processed/artist/${artistId}/avatar.webp`
+        }
+
+        item.imageUrl = imageUrl;
 
         const transactItems: TransactWriteCommandInput["TransactItems"] = [
             {

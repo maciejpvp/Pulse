@@ -46,7 +46,7 @@ export const handler = async (event: any) => {
         artist: {
             id: item.PK.split("#")[1],
             name: artistDetails?.name,
-            imageUrl: S3_PUBLIC_URL + artistDetails?.imageUrl,
+            imageUrl: artistDetails?.imageUrl,
         },
         isBookmarked: false,
     };

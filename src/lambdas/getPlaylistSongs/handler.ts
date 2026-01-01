@@ -3,6 +3,7 @@ import { docClient } from "../../utils/dynamoClient";
 import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
 import { getArtistDetails } from "../../utils/getArtistDetails";
 import { SongItem } from "../../types";
+import { S3_PUBLIC_URL } from "../../constants";
 
 const TABLE_NAME = process.env.musicTable!;
 
@@ -104,6 +105,7 @@ export const handler = async (event: any) => {
                 id: song.SK.replace("SONG#", ""),
                 title: song.title,
                 duration: song.duration ?? 0,
+                imageUrl: song.imageUrl ? S3_PUBLIC_URL + song.imageUrl : null,
                 artist: {
                     id: song.PK.split("#")[1],
                     name: "",

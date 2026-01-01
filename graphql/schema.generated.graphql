@@ -194,12 +194,14 @@ type Song {
   title: String!
   artist: ArtistPreview!
   duration: Int
+  imageUrl: String
 }
 
 type SongPreview {
   id: ID!
   title: String!
   artistId: ID!
+  imageUrl: String
 }
 
 input SongPlayInput {

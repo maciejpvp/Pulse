@@ -1,6 +1,7 @@
 import { BatchGetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/dynamoClient";
 import { decodeCursor, encodeCursor } from "../../utils/cursorUtils";
+import { S3_PUBLIC_URL } from "../../constants";
 
 const TABLE_NAME = process.env.musicTable!;
 
@@ -12,6 +13,7 @@ export const handler = async (event: any) => {
 
         const artistId = event.source.artist.id;
         const artistName = event.source.artist.name;
+        const artistImageUrl = event.source.artist.imageUrl;
 
         if (!albumId) return {
             edges: [],
@@ -53,8 +55,8 @@ export const handler = async (event: any) => {
         // 2. Build song keys (preserve order)
         const keys = albumItems.map(item => ({
             PK: `ARTIST#${item.songArtistId}`,
-            SK: item.SK,
-        }));
+            SK: item.SK ?? null,
+        })).filter(item => item.SK !== null);
 
         // 3. BatchGet (max 100 per request)
         const batches: typeof keys[] = [];
@@ -83,7 +85,7 @@ export const handler = async (event: any) => {
 
         const songsOrdered = keys.map(key =>
             songs.find(song => song.PK === key.PK && song.SK === key.SK)
-        );
+        ).filter(song => song !== undefined);
 
         const edges = songsOrdered.map(song => {
             return {
@@ -91,9 +93,11 @@ export const handler = async (event: any) => {
                     id: song.SK.replace("SONG#", ""),
                     title: song.title,
                     duration: song.duration ?? 0,
+                    imageUrl: song.imageUrl ? S3_PUBLIC_URL + song.imageUrl : null,
                     artist: {
                         id: artistId,
                         name: artistName,
+                        imageUrl: artistImageUrl,
                     },
                 },
                 cursor: encodeCursor({ PK: `ALBUM#${albumId}`, SK: song.SK }),

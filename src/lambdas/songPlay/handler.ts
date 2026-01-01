@@ -6,7 +6,7 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 const musicTable = process.env.musicTable!;
 const musicBucket = process.env.songsBucket!;
-const urlTTL = 60;
+const urlTTL = 300;
 
 export const handler = async (event: any) => {
     const userId = event.identity?.sub;
