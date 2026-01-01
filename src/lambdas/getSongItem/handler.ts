@@ -1,5 +1,6 @@
 import { docClient } from "../../utils/dynamoClient";
 import { BatchGetCommand } from "@aws-sdk/lib-dynamodb";
+import { S3_PUBLIC_URL } from "../../constants";
 
 const musicTable = process.env.musicTable!;
 
@@ -25,12 +26,13 @@ export const handler = async (event: any) => {
         RequestItems: {
             [musicTable]: {
                 Keys: keys,
-                ProjectionExpression: "#pk, #title, #duration, #name",
+                ProjectionExpression: "#pk, #title, #duration, #name, #imageUrl",
                 ExpressionAttributeNames: {
                     "#pk": "PK",
                     "#title": "title",
                     "#duration": "duration",
                     "#name": "name",
+                    "#imageUrl": "imageUrl",
                 },
             },
         },
@@ -54,6 +56,7 @@ export const handler = async (event: any) => {
         artist: {
             id: artistId,
             name: artist.name,
+            imageUrl: artist.imageUrl ? S3_PUBLIC_URL + artist.imageUrl : undefined,
         },
     }
 

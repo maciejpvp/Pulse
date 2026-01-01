@@ -6,6 +6,7 @@ export type SongItem = {
     artist: {
         id: string;
         name: string;
+        imageUrl?: string;
     };
 }
 

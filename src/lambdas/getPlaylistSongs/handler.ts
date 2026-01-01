@@ -88,7 +88,7 @@ export const handler = async (event: any) => {
 
         // Check if one artist info
         const wantsArtist = info.some(
-            item => item.startsWith("edges/node/artist/name")
+            item => item.startsWith("edges/node/artist/name") || item.startsWith("edges/node/artist/imageUrl")
         );
 
         let artists: any[] | null = null;
@@ -109,13 +109,16 @@ export const handler = async (event: any) => {
                 artist: {
                     id: song.PK.split("#")[1],
                     name: "",
+                    imageUrl: undefined,
                 }
             };
 
             if (artists) {
                 const songArtistId = song.PK.split("#")[1];
                 console.log("Song artist id: ", songArtistId);
-                songItem.artist.name = artists.find(artist => artist.id === songArtistId)?.name;
+                const artistDetails = artists.find(artist => artist.id === songArtistId);
+                songItem.artist.name = artistDetails?.name;
+                songItem.artist.imageUrl = artistDetails?.imageUrl;
             }
 
             return {
