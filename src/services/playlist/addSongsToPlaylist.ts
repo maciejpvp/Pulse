@@ -21,6 +21,8 @@ export const addSongsToPlaylist = async (playlistId: string, songs: { id: string
                     songId: song.id,
                     songArtistId: song.artistId,
                     addedAt: new Date().toISOString(),
+                    GSI2PK: `SONG#${song.id}`,
+                    GSI2SK: `PLAYLIST#${playlistId}`,
                 },
             },
         }));

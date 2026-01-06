@@ -3,6 +3,7 @@ import { docClient } from "../../utils/dynamoClient";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { createGenericPresignedPost } from "../../utils/createPresignedPOST";
 import { normalizeName } from "../../utils/normalizeName";
+import { insertBookmarkRecords } from "../../services/bookmark/insertBookmarkRecords";
 
 const musicTable = process.env.musicTable!;
 const picturesBucket = process.env.picturesBucket!;
@@ -30,6 +31,16 @@ export const handler = async (event: any) => {
     };
 
     await docClient.send(new PutCommand({ TableName: musicTable, Item: item }));
+
+    await insertBookmarkRecords({
+        userId,
+        records: [
+            {
+                itemId: id,
+                itemType: "PLAYLIST",
+            }
+        ]
+    })
 
     // Generate S3 Presigned POST URL for user to opptionaly upload Playlist Cover
     const presignedPost = await createGenericPresignedPost({

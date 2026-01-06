@@ -70,6 +70,8 @@ export const handler = async (event: S3Event) => {
                 SK: `SONG#${songId}`,
                 songArtistId: artistId,
                 songId: songId,
+                GSI2PK: `SONG#${songId}`,
+                GSI2SK: `ALBUM#${albumId}`,
             };
 
             transactItems.push({

@@ -34,6 +34,14 @@ type CreateAlbumResponse {
   imageUrl: String!
   fields: String!
 }
+
+# Remove Album
+
+input RemoveAlbumInput {
+  albumId: String!
+  artistId: String!
+}
+
 type Artist {
   id: ID!
   name: String!
@@ -171,9 +179,12 @@ type Mutation {
   Get S3 upload URL to upload mp3 file into bucket
   """
   songPlay(input: SongPlayInput!): String!
+  songRemove(input: RemoveSongInput!): Boolean!
   songUpload(input: SongUploadInput!): SongUploadResponse!
   artistCreate(name: String!): CreateArtistResponse!
+  artistRemove(id: ID!): Boolean!
   albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
+  albumRemove(input: RemoveAlbumInput!): Boolean!
   playlistCreate(name: String!): CreatePlaylistResponse!
   playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
@@ -231,6 +242,14 @@ type SongConnection {
 type SongUploadResponse {
   uploadUrl: String!
 }
+
+# Remove Songs
+input RemoveSongInput {
+    songId: ID!
+    artistId: ID!
+}
+
+    
 type User {
   id: ID!
 }

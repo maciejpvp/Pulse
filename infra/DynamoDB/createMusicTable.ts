@@ -25,7 +25,12 @@ export const createMusicTable = ({ stack, stage }: Props) => {
         projectionType: dynamodb.ProjectionType.ALL,
     });
 
-
+    table.addGlobalSecondaryIndex({
+        indexName: "GSI2",
+        partitionKey: { name: "GSI2PK", type: dynamodb.AttributeType.STRING },
+        sortKey: { name: "GSI2SK", type: dynamodb.AttributeType.STRING },
+        projectionType: dynamodb.ProjectionType.ALL,
+    });
 
     return table;
 };

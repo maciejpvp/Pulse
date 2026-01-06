@@ -34,3 +34,10 @@ type CreateAlbumResponse {
   imageUrl: String!
   fields: String!
 }
+
+# Remove Album
+
+input RemoveAlbumInput {
+  albumId: String!
+  artistId: String!
+}

@@ -4,7 +4,7 @@ const musicTable = process.env.musicTable!;
 
 type RecordType = {
     itemId: string;
-    artistId?: string;
+    artistId?: string; // Only for ALBUM and SONG
     itemType: "ALBUM" | "ARTIST" | "PLAYLIST" | "SONG";
 }
 
@@ -27,6 +27,8 @@ export const insertBookmarkRecords = async (props: Props) => {
             artistId: record.artistId,
             GSI1PK: `USER#${props.userId}`,
             GSI1SK: `BOOKMARK#${timestamp}#${record.itemId}`,
+            GSI2PK: `${record.itemType}#${record.itemId}`,
+            GSI2SK: `USER#${props.userId}`,
         },
     }));
 

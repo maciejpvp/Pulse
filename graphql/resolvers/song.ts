@@ -12,6 +12,11 @@ export const songResolvers = (lambdas: ReturnType<typeof createLambdas>) => [
         lambda: lambdas.songPlay.lambdaFunction,
     },
     {
+        typeName: "Mutation",
+        fieldName: "songRemove",
+        lambda: lambdas.removeSong.lambdaFunction,
+    },
+    {
         typeName: "Query",
         fieldName: "song",
         lambda: lambdas.getSongItem.lambdaFunction,
