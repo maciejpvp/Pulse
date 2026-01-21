@@ -6,6 +6,7 @@ import { songResolvers } from "./resolvers/song"
 import { userResolvers } from "./resolvers/user"
 import { bookmarkResolvers } from "./resolvers/bookmark"
 import { searchResolvers } from "./resolvers/search"
+import { cloudstateResolvers } from "./resolvers/cloudstate"
 
 export const getResolvers = (lambdas: ReturnType<typeof createLambdas>) => {
     return [
@@ -16,5 +17,6 @@ export const getResolvers = (lambdas: ReturnType<typeof createLambdas>) => {
         ...userResolvers(lambdas),
         ...bookmarkResolvers(lambdas),
         ...searchResolvers(lambdas),
+        ...cloudstateResolvers(lambdas),
     ]
 }

@@ -1,0 +1,36 @@
+input CloudStateUpdateInput {
+    version: Int
+    attributes: CloudStateAttributes!
+}
+
+input CloudStateAttributes {
+    primeDeviceId: String
+    trackId: String
+    isPlaying: Boolean
+    positionMs: Int
+    repeatMode: String
+    shuffleMode: String
+    volume: Int
+}
+
+type CloudState {
+    primeDeviceId: String
+    trackId: String
+    isPlaying: Boolean
+    positionMs: Int
+    repeatMode: String
+    shuffleMode: String
+    volume: Int
+}
+
+input DevicePingInput {
+    deviceId: String!
+    name: String!
+    type: String!
+}
+
+type Device {
+    deviceId: String!
+    name: String!
+    type: String!
+}

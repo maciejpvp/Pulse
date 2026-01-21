@@ -1,11 +1,22 @@
 type Query {
   artist(artistId: ID!): Artist!
+
   album(input: AlbumQueryInput!): Album!
+
   playlist(playlistId: ID!): Playlist!
+
   song(songId: ID!, artistId: ID!): Song!
+
   recentPlayed: [RecentPlayedItem!]!
+
   bookmarks: BookmarkConnection!
+
   search(input: SearchInput!): SearchResponse
+
+  cloudState: CloudState!
+
+  devices: [Device!]!
+
 }
 
 type Mutation {
@@ -15,13 +26,20 @@ type Mutation {
   songPlay(input: SongPlayInput!): String!
   songRemove(input: RemoveSongInput!): Boolean!
   songUpload(input: SongUploadInput!): SongUploadResponse!
+
   artistCreate(name: String!): CreateArtistResponse!
   artistRemove(id: ID!): Boolean!
+
   albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
   albumRemove(input: RemoveAlbumInput!): Boolean!
+  
   playlistCreate(name: String!): CreatePlaylistResponse!
   playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
+
+  cloudStateUpdate(input: CloudStateUpdateInput!): Boolean!
+  devicePing(input: DevicePingInput!): Boolean!
+
   bookmarkAdd(input: BookmarkAddInput!): Boolean!
   bookmarkRemove(input: BookmarkRemoveInput!): Boolean!
 }
