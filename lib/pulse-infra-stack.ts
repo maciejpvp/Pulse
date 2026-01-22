@@ -9,6 +9,8 @@ import { AppSyncApi } from "../infra/createAppSync";
 import { createMusicTable } from "../infra/DynamoDB/createMusicTable";
 import { createUpdateRecentPlayedSQS } from "../infra/createUpdateRecentPlayedSQS";
 import { createPicturesBucket } from "../infra/s3/createPicturesBucket";
+import { AuthorizationType } from "aws-cdk-lib/aws-appsync";
+import { setupSystemMutation } from "../infra/appsync/setupSystemMutation";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -33,13 +35,22 @@ export class PulseInfraStack extends cdk.Stack {
       lambdasWithAccessToSQS: [lambdas.songPlay.lambdaFunction],
     });
 
-    new AppSyncApi(this, "SongsApi", {
+    const api = new AppSyncApi(this, "SongsApi", {
       name: "SongsApi",
       schemaDir: "graphql/schema",
       resolvers: getResolvers(lambdas),
       userPool,
       userPoolClient,
-      enableApiKey: false,
+      enableApiKey: true,
+      additionalAuthorizationModes: [
+        { authorizationType: AuthorizationType.IAM }
+      ],
     });
+
+    const graphqlApi = api.api;
+
+    const noneDS = graphqlApi.addNoneDataSource('NoneDS');
+
+    setupSystemMutation({ api: graphqlApi, lambda: lambdas.devicePing.lambdaFunction, mutationName: "_publishDevicePing", noneDS });
   }
 }

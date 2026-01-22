@@ -23,6 +23,8 @@ type AppSyncApiProps = {
 
   // enable API key if needed
   enableApiKey?: boolean;
+
+  additionalAuthorizationModes?: appsync.AuthorizationMode[];
 };
 
 export class AppSyncApi extends Construct {
@@ -37,6 +39,7 @@ export class AppSyncApi extends Construct {
       resolvers = [],
       userPool,
       enableApiKey = false,
+      additionalAuthorizationModes = [],
     } = props;
 
     const authModes: appsync.AuthorizationMode[] = [];
@@ -53,6 +56,8 @@ export class AppSyncApi extends Construct {
         authorizationType: appsync.AuthorizationType.API_KEY,
       });
     }
+
+    authModes.push(...additionalAuthorizationModes);
 
     const defaultAuth =
       authModes.length > 0

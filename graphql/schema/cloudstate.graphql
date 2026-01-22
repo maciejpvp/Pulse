@@ -29,7 +29,7 @@ input DevicePingInput {
     type: String!
 }
 
-type Device {
+type Device @aws_iam @aws_cognito_user_pools {
     deviceId: String!
     name: String!
     type: String!

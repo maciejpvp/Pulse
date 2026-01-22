@@ -1,4 +1,5 @@
 import { updateDeviceMetadata } from "../../services/pulseConnect/updateDeviceMetadata";
+import { executeAppSyncRequest } from "../../utils/appsyncRequest";
 
 export const handler = async (event: any) => {
     try {
@@ -19,6 +20,24 @@ export const handler = async (event: any) => {
         };
 
         await updateDeviceMetadata(props);
+
+        const mutation = `
+            mutation PublishPing($input: DevicePingInput!) {
+                _publishDevicePing(input: $input) {
+                    deviceId
+                    name
+                    type
+                }
+            }
+        `;
+
+        await executeAppSyncRequest(mutation, {
+            input: {
+                deviceId: input.deviceId,
+                name: input.name,
+                type: input.type
+            }
+        });
 
         return true
     } catch (err) {

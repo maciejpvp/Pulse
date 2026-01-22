@@ -128,7 +128,7 @@ input DevicePingInput {
     type: String!
 }
 
-type Device {
+type Device @aws_iam @aws_cognito_user_pools {
     deviceId: String!
     name: String!
     type: String!
@@ -241,9 +241,18 @@ type Mutation {
 
   cloudStateUpdate(input: CloudStateUpdateInput!): Boolean!
   devicePing(input: DevicePingInput!): Boolean!
+  _publishDevicePing(input: DevicePingInput!): Device
+    @aws_iam
 
   bookmarkAdd(input: BookmarkAddInput!): Boolean!
   bookmarkRemove(input: BookmarkRemoveInput!): Boolean!
+}
+
+type Subscription {
+  onDevicePing: Device
+    @aws_subscribe(mutations: ["_publishDevicePing"])
+    @aws_cognito_user_pools
+    @aws_iam
 }
 
 input SearchInput {
