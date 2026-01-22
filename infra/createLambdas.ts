@@ -336,7 +336,6 @@ export const createLambdas = (stack: Stack, props: Props) => {
     {
       name: "devicePing",
       stage,
-      nodeModules: ['@smithy/util-utf8', '@aws-crypto/sha256-js'],
       resources: [
         {
           grant: (fn) => musicTable.grantReadWriteData(fn),

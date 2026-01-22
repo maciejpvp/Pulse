@@ -1,5 +1,8 @@
 import { Stack, RemovalPolicy } from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import { CreateLambda } from "../../constructs/CreateLambda";
+import { DynamoEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 
 type Props = {
     stack: Stack;
@@ -16,6 +19,7 @@ export const createMusicTable = ({ stack, stage }: Props) => {
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
         removalPolicy: RemovalPolicy.DESTROY,
         timeToLiveAttribute: "ttl",
+        stream: dynamodb.StreamViewType.NEW_IMAGE,
     });
 
     table.addGlobalSecondaryIndex({
@@ -32,5 +36,38 @@ export const createMusicTable = ({ stack, stage }: Props) => {
         projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    return table;
+    const broadcastDevicePingLambda = new CreateLambda(stack, {
+        name: "broadcastDevicePing",
+        stage,
+        nodeModules: ['@smithy/util-utf8', '@aws-crypto/sha256-js'],
+        resources: [
+            {
+                grant: (fn) => table.grantStreamRead(fn),
+                envName: "musicTable",
+                envValue: table.tableName,
+            },
+        ],
+    })
+
+    const deviceUpdateFilter = new DynamoEventSource(table, {
+        startingPosition: lambda.StartingPosition.LATEST,
+        batchSize: 5,
+        filters: [
+            lambda.FilterCriteria.filter({
+                dynamodb: {
+                    NewImage: {
+                        PK: { S: lambda.FilterRule.beginsWith('USER#') },
+                        SK: { S: lambda.FilterRule.beginsWith('DEVICE#') }
+                    }
+                }
+            })
+        ]
+    });
+
+    broadcastDevicePingLambda.lambdaFunction.addEventSource(deviceUpdateFilter);
+
+    return {
+        table,
+        broadcastDevicePingLambda,
+    };
 };
