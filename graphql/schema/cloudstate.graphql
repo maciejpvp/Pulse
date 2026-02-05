@@ -3,21 +3,25 @@ input CloudStateUpdateInput {
     attributes: CloudStateAttributes!
 }
 
-input CloudStateAttributes {
+input CloudStateAttributes @aws_iam @aws_cognito_user_pools {
     primeDeviceId: String
     trackId: String
+    trackArtistId: String
     isPlaying: Boolean
-    positionMs: Int
+    positionMs: String
+    positionUpdatedAt: String
     repeatMode: String
     shuffleMode: String
     volume: Int
 }
 
-type CloudState {
+type CloudState @aws_iam @aws_cognito_user_pools {
     primeDeviceId: String
     trackId: String
+    trackArtistId: String
     isPlaying: Boolean
-    positionMs: Int
+    positionMs: String
+    positionUpdatedAt: String
     repeatMode: String
     shuffleMode: String
     volume: Int
@@ -33,4 +37,5 @@ type Device @aws_iam @aws_cognito_user_pools {
     deviceId: String!
     name: String!
     type: String!
+    lastSeen: String!
 }

@@ -18,7 +18,18 @@ export const getActiveDevicesList = async (userId: string) => {
 
     const items = result.Items || [];
 
-    const devices = items.map(item => ({
+    // filter old devices
+    const filteredItems = items.filter(item => {
+        const lastSeen = item.updated_at;
+        const now = Date.now();
+        const FIVE_MINUTES = 5 * 60 * 1000;
+        const isFresh = now - new Date(lastSeen).getTime() < FIVE_MINUTES;
+
+        return isFresh;
+    })
+
+
+    const devices = filteredItems.map(item => ({
         deviceId: item.SK.split("#")[1],
         name: item.name,
         type: item.type,

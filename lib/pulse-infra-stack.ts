@@ -18,7 +18,7 @@ export class PulseInfraStack extends cdk.Stack {
 
     const { userPool, userPoolClient } = createCognito(this, "dev");
 
-    const { table: musicTable, broadcastDevicePingLambda } = createMusicTable({ stack: this, stage: "dev" });
+    const { table: musicTable, broadcastDevicePingLambda, broadcastCloudStateLambda } = createMusicTable({ stack: this, stage: "dev" });
     const songsBucket = createSongsBucket(this, { musicTable });
     const picturesBucket = createPicturesBucket(this, { table: musicTable });
 
@@ -52,5 +52,6 @@ export class PulseInfraStack extends cdk.Stack {
     const noneDS = graphqlApi.addNoneDataSource('NoneDS');
 
     setupSystemMutation({ api: graphqlApi, lambda: broadcastDevicePingLambda.lambdaFunction, mutationName: "_publishDevicePing", noneDS });
+    setupSystemMutation({ api: graphqlApi, lambda: broadcastCloudStateLambda.lambdaFunction, mutationName: "_publishCloudState", noneDS });
   }
 }

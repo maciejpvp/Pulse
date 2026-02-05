@@ -102,21 +102,25 @@ input CloudStateUpdateInput {
     attributes: CloudStateAttributes!
 }
 
-input CloudStateAttributes {
+input CloudStateAttributes @aws_iam @aws_cognito_user_pools {
     primeDeviceId: String
     trackId: String
+    trackArtistId: String
     isPlaying: Boolean
-    positionMs: Int
+    positionMs: String
+    positionUpdatedAt: String
     repeatMode: String
     shuffleMode: String
     volume: Int
 }
 
-type CloudState {
+type CloudState @aws_iam @aws_cognito_user_pools {
     primeDeviceId: String
     trackId: String
+    trackArtistId: String
     isPlaying: Boolean
-    positionMs: Int
+    positionMs: String
+    positionUpdatedAt: String
     repeatMode: String
     shuffleMode: String
     volume: Int
@@ -132,6 +136,7 @@ type Device @aws_iam @aws_cognito_user_pools {
     deviceId: String!
     name: String!
     type: String!
+    lastSeen: String!
 }
 enum ContextType {
   ALBUM
@@ -240,6 +245,8 @@ type Mutation {
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
 
   cloudStateUpdate(input: CloudStateUpdateInput!): Boolean!
+  _publishCloudState(input: CloudStateAttributes!): CloudState
+    @aws_iam
   devicePing(input: DevicePingInput!): Boolean!
   _publishDevicePing(input: DevicePingInput!): Device
     @aws_iam
@@ -251,6 +258,11 @@ type Mutation {
 type Subscription {
   onDevicePing: Device
     @aws_subscribe(mutations: ["_publishDevicePing"])
+    @aws_cognito_user_pools
+    @aws_iam
+
+  onCloudState: CloudState
+    @aws_subscribe(mutations: ["_publishCloudState"])
     @aws_cognito_user_pools
     @aws_iam
 }

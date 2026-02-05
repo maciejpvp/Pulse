@@ -26,9 +26,10 @@ export const handler = async (event: any) => {
         RequestItems: {
             [musicTable]: {
                 Keys: keys,
-                ProjectionExpression: "#pk, #title, #duration, #name, #imageUrl",
+                ProjectionExpression: "#pk, #sk, #title, #duration, #name, #imageUrl",
                 ExpressionAttributeNames: {
                     "#pk": "PK",
+                    "#sk": "SK",
                     "#title": "title",
                     "#duration": "duration",
                     "#name": "name",
@@ -41,18 +42,27 @@ export const handler = async (event: any) => {
 
     console.log("Consumed capacity:", res.ConsumedCapacity);
 
-    const artist = res.Responses?.[musicTable][0];
-    const song = res.Responses?.[musicTable][1];
+
+
+    const responses = res.Responses?.[musicTable];
+
+    console.log("Responses:", responses);
+
+    if (!responses?.length) throw new Error("No responses found");
+
+    const song = responses.find((item) => item.PK.startsWith(`ARTIST#`) && item.SK.startsWith(`SONG#`));
+    const artist = responses.find((item) => item.PK.startsWith(`ARTIST#`) && item.SK.startsWith("METADATA"));
+    console.log("Song:", song);
+    console.log("Artist:", artist);
 
     if (!song || !artist) throw new Error("Song or artist not found");
 
-    console.log("Song:", song);
-    console.log("Artist:", artist);
 
     const item = {
         id: songId,
         title: song.title,
         duration: song.duration ?? 0,
+        imageUrl: song.imageUrl ? S3_PUBLIC_URL + song.imageUrl : undefined,
         artist: {
             id: artistId,
             name: artist.name,

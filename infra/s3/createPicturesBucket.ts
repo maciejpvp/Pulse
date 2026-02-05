@@ -25,7 +25,9 @@ export function createPicturesBucket(stack: Stack, { table }: Props): s3.Bucket 
                     s3.HttpMethods.POST,
                 ],
                 allowedOrigins: [
+                    "*",
                     "http://localhost:5173",
+                    "https://d1ri2edf6jmsxi.cloudfront.net"
                 ],
                 allowedHeaders: ["*"],
                 exposedHeaders: ["ETag"],

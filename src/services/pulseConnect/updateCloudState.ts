@@ -8,7 +8,7 @@ const DEFAULT_VALUES = {
     trackId: "none",
     isPlaying: false,
     positionMs: 0,
-    repeatMode: "OFF",
+    repeatMode: "none",
     shuffleMode: "OFF",
     volume: 50,
     version: 0
@@ -21,7 +21,8 @@ type UpdateCloudStateParams = {
         primeDeviceId?: string;
         trackId?: string;
         isPlaying?: boolean;
-        positionMs?: number;
+        positionMs?: string;
+        positionUpdatedAt?: string;
         repeatMode?: string;
         shuffleMode?: string;
         volume?: number;

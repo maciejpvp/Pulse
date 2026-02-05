@@ -1,4 +1,4 @@
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/dynamoClient";
 
 const musicTable = process.env.musicTable!;
@@ -38,6 +38,25 @@ export const handler = async (event: any) => {
                     GSI1PK: `USER#${userId}`,
                     GSI1SK: `${now}#${contextType}#${contextId}`,
                 }
+            }));
+
+            // update cloudstate
+
+            await docClient.send(new UpdateCommand({
+                TableName: musicTable,
+                Key: {
+                    PK: `USER#${userId}`,
+                    SK: `CLOUDSTATE`,
+                },
+                UpdateExpression: "SET #trackId = :trackId, #trackArtistId = :trackArtistId",
+                ExpressionAttributeNames: {
+                    "#trackId": "trackId",
+                    "#trackArtistId": "trackArtistId"
+                },
+                ExpressionAttributeValues: {
+                    ":trackId": songId,
+                    ":trackArtistId": artistId,
+                },
             }));
         } catch (error) {
             console.error(`Failed to process record ${record.messageId}:`, error);

@@ -38,6 +38,8 @@ type Mutation {
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
 
   cloudStateUpdate(input: CloudStateUpdateInput!): Boolean!
+  _publishCloudState(input: CloudStateAttributes!): CloudState
+    @aws_iam
   devicePing(input: DevicePingInput!): Boolean!
   _publishDevicePing(input: DevicePingInput!): Device
     @aws_iam
@@ -49,6 +51,11 @@ type Mutation {
 type Subscription {
   onDevicePing: Device
     @aws_subscribe(mutations: ["_publishDevicePing"])
+    @aws_cognito_user_pools
+    @aws_iam
+
+  onCloudState: CloudState
+    @aws_subscribe(mutations: ["_publishCloudState"])
     @aws_cognito_user_pools
     @aws_iam
 }
