@@ -310,6 +310,50 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envValue: picturesBucket.bucketName,
         }
       ],
+    },
+    {
+      name: "updateCloudState",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getCloudState",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "devicePing",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadWriteData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "getDevices",
+      stage,
+      resources: [
+        {
+          grant: (fn) => musicTable.grantReadData(fn),
+          envName: "musicTable",
+          envValue: musicTable.tableName,
+        },
+      ],
     }
   ];
 

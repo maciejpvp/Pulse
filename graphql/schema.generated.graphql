@@ -97,6 +97,47 @@ input BookmarkRemoveInput {
     items: [String!]
 }
 
+input CloudStateUpdateInput {
+    version: Int
+    attributes: CloudStateAttributes!
+}
+
+input CloudStateAttributes @aws_iam @aws_cognito_user_pools {
+    primeDeviceId: String
+    trackId: String
+    trackArtistId: String
+    isPlaying: Boolean
+    positionMs: String
+    positionUpdatedAt: String
+    repeatMode: String
+    shuffleMode: String
+    volume: Int
+}
+
+type CloudState @aws_iam @aws_cognito_user_pools {
+    primeDeviceId: String
+    trackId: String
+    trackArtistId: String
+    isPlaying: Boolean
+    positionMs: String
+    positionUpdatedAt: String
+    repeatMode: String
+    shuffleMode: String
+    volume: Int
+}
+
+input DevicePingInput {
+    deviceId: String!
+    name: String!
+    type: String!
+}
+
+type Device @aws_iam @aws_cognito_user_pools {
+    deviceId: String!
+    name: String!
+    type: String!
+    lastSeen: String!
+}
 enum ContextType {
   ALBUM
   PLAYLIST
@@ -166,12 +207,23 @@ type PlaylistRemoveSongResult {
 
 type Query {
   artist(artistId: ID!): Artist!
+
   album(input: AlbumQueryInput!): Album!
+
   playlist(playlistId: ID!): Playlist!
+
   song(songId: ID!, artistId: ID!): Song!
+
   recentPlayed: [RecentPlayedItem!]!
+
   bookmarks: BookmarkConnection!
+
   search(input: SearchInput!): SearchResponse
+
+  cloudState: CloudState!
+
+  devices: [Device!]!
+
 }
 
 type Mutation {
@@ -181,15 +233,38 @@ type Mutation {
   songPlay(input: SongPlayInput!): String!
   songRemove(input: RemoveSongInput!): Boolean!
   songUpload(input: SongUploadInput!): SongUploadResponse!
+
   artistCreate(name: String!): CreateArtistResponse!
   artistRemove(id: ID!): Boolean!
+
   albumCreate(name: String!, artistId: ID!): CreateAlbumResponse!
   albumRemove(input: RemoveAlbumInput!): Boolean!
+  
   playlistCreate(name: String!): CreatePlaylistResponse!
   playlistAddSong(input: PlaylistAddSongInput!): PlaylistAddSongResult!
   playlistRemoveSong(input: PlaylistRemoveSongInput): PlaylistRemoveSongResult!
+
+  cloudStateUpdate(input: CloudStateUpdateInput!): Boolean!
+  _publishCloudState(input: CloudStateAttributes!): CloudState
+    @aws_iam
+  devicePing(input: DevicePingInput!): Boolean!
+  _publishDevicePing(input: DevicePingInput!): Device
+    @aws_iam
+
   bookmarkAdd(input: BookmarkAddInput!): Boolean!
   bookmarkRemove(input: BookmarkRemoveInput!): Boolean!
+}
+
+type Subscription {
+  onDevicePing: Device
+    @aws_subscribe(mutations: ["_publishDevicePing"])
+    @aws_cognito_user_pools
+    @aws_iam
+
+  onCloudState: CloudState
+    @aws_subscribe(mutations: ["_publishCloudState"])
+    @aws_cognito_user_pools
+    @aws_iam
 }
 
 input SearchInput {
