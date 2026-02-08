@@ -33,6 +33,8 @@
     "@aws-sdk/signature-v4": "^3.370.0",
     "aws-cdk-lib": "2.206.0",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.13.4",
+    "cheerio": "^1.2.0",
     "constructs": "^10.0.0",
     "joi": "^18.0.2",
     "p-limit": "^7.2.0",

@@ -58,6 +58,12 @@ async function handleRecord(record: any) {
         diff.updated.trackArtistId = newImage.trackArtistId;
     }
 
+    // if positionUpdatedAt changed also include last positionMs
+    if (diff.updated.positionUpdatedAt) {
+        console.log("Position updated at changed", newImage.positionMs)
+        diff.updated.positionMs = newImage.positionMs;
+    }
+
     // Filter only allowed attributes for the mutation
     const filteredUpdate: Record<string, any> = {};
     for (const key of ALLOWED_ATTRIBUTES) {

@@ -22,8 +22,9 @@ export const getActiveDevicesList = async (userId: string) => {
     const filteredItems = items.filter(item => {
         const lastSeen = item.updated_at;
         const now = Date.now();
-        const FIVE_MINUTES = 5 * 60 * 1000;
-        const isFresh = now - new Date(lastSeen).getTime() < FIVE_MINUTES;
+        const now_in_seconds = Math.floor(now / 1000);
+        const TEN_MINUTES = 10 * 60;
+        const isFresh = now_in_seconds - lastSeen < TEN_MINUTES;
 
         return isFresh;
     })
