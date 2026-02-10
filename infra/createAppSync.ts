@@ -9,7 +9,10 @@ import * as path from "path";
 export type AppSyncResolver = {
   typeName: string;
   fieldName: string;
-  lambda: lambda.IFunction;
+  lambda?: lambda.IFunction;
+  code?: appsync.Code;
+  runtime?: appsync.FunctionRuntime;
+  dataSource?: appsync.BaseDataSource;
 };
 
 type AppSyncApiProps = {
@@ -105,15 +108,25 @@ export class AppSyncApi extends Construct {
     });
   }
 
-  private attachResolver(resolver: AppSyncResolver) {
-    const ds = this.api.addLambdaDataSource(
-      `${resolver.typeName}${resolver.fieldName}DS`,
-      resolver.lambda,
-    );
+  public attachResolver(resolver: AppSyncResolver) {
+    let ds: appsync.BaseDataSource;
+
+    if (resolver.dataSource) {
+      ds = resolver.dataSource;
+    } else if (resolver.lambda) {
+      ds = this.api.addLambdaDataSource(
+        `${resolver.typeName}${resolver.fieldName}DS`,
+        resolver.lambda,
+      );
+    } else {
+      throw new Error(`Resolver ${resolver.typeName}.${resolver.fieldName} must have either a lambda or a dataSource`);
+    }
 
     ds.createResolver(`${resolver.typeName}${resolver.fieldName}Resolver`, {
       typeName: resolver.typeName,
       fieldName: resolver.fieldName,
+      code: resolver.code,
+      runtime: resolver.runtime,
     });
   }
 

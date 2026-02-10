@@ -47,7 +47,7 @@ describe('generateUpdateCloudStateCommand', () => {
             userId,
             attributes: {
                 trackId: 'track-001',
-                positionMs: 5000
+                positionMs: '5000'
             }
         };
 
@@ -57,7 +57,7 @@ describe('generateUpdateCloudStateCommand', () => {
         expect(result.UpdateExpression).toContain('#positionMs = :positionMs');
         expect(result.UpdateExpression).toContain('#version = if_not_exists(#version, :zero) + :one');
         expect(result.ExpressionAttributeValues![':trackId']).toBe('track-001');
-        expect(result.ExpressionAttributeValues![':positionMs']).toBe(5000);
+        expect(result.ExpressionAttributeValues![':positionMs']).toBe('5000');
     });
 
     it('should handle attributes not in DEFAULT_VALUES', async () => {

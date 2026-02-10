@@ -25,6 +25,7 @@
     "typescript": "~5.6.3"
   },
   "dependencies": {
+    "@aws-appsync/utils": "^2.0.3",
     "@aws-sdk/client-dynamodb": "^3.946.0",
     "@aws-sdk/client-sqs": "^3.956.0",
     "@aws-sdk/lib-dynamodb": "^3.946.0",
