@@ -11,7 +11,7 @@ import { createUpdateRecentPlayedSQS } from "../infra/createUpdateRecentPlayedSQ
 import { createPicturesBucket } from "../infra/s3/createPicturesBucket";
 import { AuthorizationType } from "aws-cdk-lib/aws-appsync";
 import { setupSystemMutation } from "../infra/appsync/setupSystemMutation";
-import { cloudStateUpdateResolver } from "../graphql/resolvers/cloudstate";
+import { cloudStateUpdateResolver, devicePingResolver } from "../graphql/resolvers/cloudstate";
 
 export class PulseInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -56,6 +56,7 @@ export class PulseInfraStack extends cdk.Stack {
 
     // Manually attach cloudStateUpdate as it needs the DynamoDB data source
     api.attachResolver(cloudStateUpdateResolver(dbDataSource));
+    api.attachResolver(devicePingResolver(dbDataSource));
 
     setupSystemMutation({ api: graphqlApi, lambda: broadcastDevicePingLambda.lambdaFunction, mutationName: "_publishDevicePing", noneDS });
     setupSystemMutation({ api: graphqlApi, lambda: broadcastCloudStateLambda.lambdaFunction, mutationName: "_publishCloudState", noneDS });

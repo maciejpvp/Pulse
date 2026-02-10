@@ -13,12 +13,15 @@ export const cloudstateResolvers = (lambdas: ReturnType<typeof createLambdas>) =
         fieldName: "devices",
         lambda: lambdas.getDevices.lambdaFunction,
     },
-    {
-        typeName: "Mutation",
-        fieldName: "devicePing",
-        lambda: lambdas.devicePing.lambdaFunction,
-    },
 ]
+
+export const devicePingResolver = (dbDataSource: appsync.BaseDataSource) => ({
+    typeName: "Mutation",
+    fieldName: "devicePing",
+    runtime: appsync.FunctionRuntime.JS_1_0_0,
+    code: appsync.Code.fromAsset(path.join(__dirname, 'devicePingResolver.mjs')),
+    dataSource: dbDataSource,
+});
 
 export const cloudStateUpdateResolver = (dbDataSource: appsync.BaseDataSource) => ({
     typeName: "Mutation",

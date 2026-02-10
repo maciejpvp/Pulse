@@ -334,17 +334,6 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
-      name: "devicePing",
-      stage,
-      resources: [
-        {
-          grant: (fn) => musicTable.grantReadWriteData(fn),
-          envName: "musicTable",
-          envValue: musicTable.tableName,
-        },
-      ],
-    },
-    {
       name: "getDevices",
       stage,
       resources: [
